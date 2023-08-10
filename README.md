@@ -750,5 +750,246 @@ ___qSMART__________________________________________________________
 	#use ---> ps aux | grep -i mysql
 	#and kill all mysql processes and start MariaDB again	
 
+___ssh-chat_qchat ssh__________________________SSH CHAT_____________________________________________________________
+--------------------------------------------------------------------------------------------------------------------
+	https://github.com/shazow/ssh-chat
+	#Start ssh chat
+		ssh-chat --verbose --bind ":22" --identity ~/.ssh/id_dsa
+	#Connect to chat
+		ssh ip-adress 
+
+
+___qOpenVPN_________________________________________________________________________________________________________
+--------------------------------------------------------------------------------------------------------------------
+	#https://www.digitalocean.com/community/tutorials/how-to-set-up-and-configure-an-openvpn-server-on-centos-7
+	#STEP 1
+		#Install OpenVPN
+			yum install openvpn
+		#Download easy-rsa and copy some files to the speciad directory
+			wget -O /tmp/easyrsa https://github.com/OpenVPN/easy-rsa-old/archive/2.3.3.tar.gz
+			tar xfz /tmp/easyrsa
+			mkdir /etc/openvpn/easy-rsa
+			cp -rf easy-rsa-old-2.3.3/easy-rsa/2.0/* /etc/openvpn/easy-rsa
+		#If needed ---> chown sammy /etc/openvpn/easy-rsa/
+
+	#STEP 2 Configure OpenVPN
+		#Copy config file
+			cp /usr/share/doc/openvpn-2.4.8/sample/sample-config-files/server.conf /etc/openvpn/
+		#Edit config file /etc/openvpn/server.conf
+		#push all traffic on client to VPN server
+			push "redirect-gateway def1 bypass-dhcp"
+		#DNS for client
+			push "dhcp-option DNS 8.8.8.8"
+			push "dhcp-option DNS 8.8.4.4"
+			user nobody
+			group nobody
+			topology subnet
+
+			#remote-cert-eku "TLS Web Client Authentication" (Centos 7)
+			;tls-auth ta.key 0
+			#tls-crypt myvpn.tlsauth (Centos 7)
+_____________________________________________________________START____server.conf
+	port 1194
+	proto udp
+	dev tun
+	ca /etc/openvpn/easy-rsa/keys/ca.crt
+	cert /etc/openvpn/easy-rsa/keys/server.crt
+	key /etc/openvpn/easy-rsa/keys/server.key
+	dh /etc/openvpn/easy-rsa/keys/dh2048.pem
+	topology subnet
+	server 10.8.0.0 255.255.255.0
+	ifconfig-pool-persist ipp.txt
+	push "redirect-gateway def1 bypass-dhcp"
+	push "dhcp-option DNS 8.8.8.8"
+	push "dhcp-option DNS 8.8.4.4"
+	keepalive 10 120
+	cipher AES-256-CBC
+	user nobody
+	group nobody
+	persist-key
+	persist-tun
+	status openvpn-status.log
+	log         openvpn.log
+	verb 3
+	explicit-exit-notify 1
+__________________________________________________________________END__server.conf
+	systemctl restart openvpn@server.service
+
+	#Generate kay (if You useing TLS auth)
+		openvpn --genkey --secret /etc/openvpn/myvpn.tlsauth
+
+	#STEP 3 Generating Keys and Certificates
+			mkdir /etc/openvpn/easy-rsa/keys	
+		#vim /etc/openvpn/easy-rsa/vars
+
+			cd /etc/openvpn/easy-rsa
+			source ./vars
+			./clean-all
+			./build-ca
+			./build-key-server server
+			./build-dh
+		#This may take a few minutes to complete.
+
+			cd /etc/openvpn/easy-rsa/keys
+			cp dh2048.pem ca.crt server.crt server.key /etc/openvpn
+		#Create client sertificates
+			cd /etc/openvpn/easy-rsa
+			./build-key client
+			#cp /etc/openvpn/easy-rsa/openssl-1.0.0.cnf /etc/openvpn/easy-rsa/openssl.cnf (Centos 7)
+
+		#Note!!! the path to all keys must be relative
+			ca /etc/openvpn/easy-rsa/keys/ca.crt
+			cert /etc/openvpn/easy-rsa/keys/server.crt
+			key /etc/openvpn/easy-rsa/keys/server.key
+			dh /etc/openvpn/easy-rsa/keys/dh2048.pem
+
+	#Step 4 — Routing
+		#To have NAT on clien need add route on a server by using iptables
+			iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+			service iptables save
+			service iptables restart
+		#Then, enable IP Forwarding in sysctl:
+			vim /etc/sysctl.conf
+			#add
+			#Controls IP packet forwarding
+			net.ipv4.ip_forward = 1
+		#Finally, apply our new sysctl settings. Start the server and assure that it starts automatically on boot:
+			sysctl -p
+			service openvpn start
+			chkconfig openvpn on
+
+	#Step 5 - Configure client (OpenVPN client for Mac "Tunnelblick")
+		#the client.crt and client.key files will are automatically named based on the parameters used with "./build-key" earlier
+
+..............................................................START...client.ovpn
+	client
+	dev tun
+	proto udp
+	remote ip-address port
+	resolv-retry infinite
+	nobind
+	persist-key
+	persist-tun
+	verb 3
+	ca /Users/john/Documents/vpn_key/ca.crt
+	cert /Users/john/Documents/vpn_key/client.crt
+	key /Users/john/Documents/vpn_key/client.key
+	;tls-crypt /Users/john/Documents/vpn_key/myvpn.tlsauth
+	redirect-gateway def1 block-local
+
+..............................................................START...client2.ovpn
+	client 2
+	dev tun
+	proto udp
+	remote ip-address port
+	resolv-retry infinite
+	nobind
+	persist-key
+	persist-tun
+	verb 3
+	ca /Users/john/Documents/vpn_key/ca.crt
+	cert /Users/john/Documents/vpn_key/client2.crt
+	key /Users/john/Documents/vpn_key/client2.key
+	redirect-gateway def1 block-local
+.................................................................END..client2.ovpn
+
+	#Add additional route to client to connect another subnte
+		push "route 198.168.10.0 255.255.255.0" (add 198.168.10.0 subnet to client)
+		push "route 198.168.5.0 255.255.255.0" (add 198.168.5.0 subnet to client)
+	#mkdir ~/vpn-keys/
+
+	ca /Users/john/Documents/vpn_key/ca.crt
+	cert /Users/john/Documents/vpn_key/client.crt
+	key /Users/john/Documents/vpn_key/client.key
+
+
+
+___qWireGuard_______________________________________________________________________________________________________
+--------------------------------------------------------------------------------------------------------------------
+	#Install Centos7
+	#https://www.wireguard.com/install/#red-hat-enterprise-linux-7-centos-7-module-tools
+	#https://www.cyberciti.biz/faq/ubuntu-20-04-set-up-wireguard-vpn-server/
+
+	sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+	sudo curl -o /etc/yum.repos.d/jdoss-wireguard-epel-7.repo https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo
+	sudo yum install wireguard-dkms wireguard-tools
+
+
+	#install server then install desctop ubuntu (link install any ubuntu desctop - https://www.makeuseof.com/install-desktop-environment-gui-ubuntu-server/)
+		sudo apt install ubuntu-desktop
+
+
+	#Install wireguard (https://www.the-digital-life.com/wireguard-installation-and-configuration/)
+	# https://www.youtube.com/watch?v=bVKNSf1p1d0
+
+	1. Install WireGuard on Server and Client
+		sudo apt update && sudo apt install wireguard
+	2. Generate keys on Server and Client
+		wg genkey | tee privatekey | wg pubkey > publickey
+	3. Configure server (/etc/wireguard/wg0.conf)
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		PrivateKey=<server-private-key>
+		Address=<server-ip-address>/<subnet>
+		SaveConfig=true
+		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o <public-interface> -j MASQUERADE;
+		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o <public-interface> -j MASQUERADE;
+		ListenPort = 51820
+		----------------------------------------------------------------------------------------------------------------
+
+		---------------Example------------------------------------------------------------------------------------------
+		[Interface]
+		Address = 10.0.0.1/8
+		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE;
+		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE;
+		ListenPort = 51820
+		PrivateKey = cMe2MDoXJ8be09bYhd0azj/PPJEPGi1riHEpnYP8lVI=
+
+		[Peer]
+		PublicKey = J+RoaunI4NENqLrRMsc3ofz/cfW/KYa3etpRfFHhAmY=
+		AllowedIPs = 10.0.0.2/32
+		----------------------------------------------------------------------------------------------------------------
+	4. Start wg on Server
+			wg-quick up wg0
+		#or for Mac OS
+			wg-quick up ~/.config/wireguard/wg0.conf
+
+	5. Configure client (/etc/wireguard/wg0.conf)
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		PrivateKey = <client-private-key>
+		Address = <client-ip-address>/<subnet>
+
+		[Peer]
+		PublicKey = <server-public-key>
+		Endpoint = <server-public-ip-address>:51820
+		AllowedIPs = 0.0.0.0/0
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		Address = 10.0.0.2/8
+		PrivateKey = eIurbkxVvISdOuiGnr4fGkjofbvueoC/qeNGy45l61A=
+
+		[Peer]
+		PublicKey = fUDlm68ko0wxGBNA7cWj1V1sBoH5bQl8suCioYRVjzU=
+		AllowedIPs = 0.0.0.0/0
+		Endpoint = 94.130.176.20:51820
+		PersistentKeepalive = 30
+		----------------------------------------------------------------------------------------------------------------
+
+	6. Start wg on Client
+			wg-quick up wg0
+		#or for Mac OS
+			wg-quick down ~/.config/wireguard/wg0.conf
+	
+	7. Configure on server allow ip forward in cat /proc/sys/net/ipv4/ip_forward set "1"
+		sudo sysctl -w net.ipv4.ip_forward=1
+		sudo sysctl -p
+
+	---------------------------------------------------------------------------------------------------------------------
+	#Client for Mac - https://medium.com/@headquartershq/setting-up-wireguard-on-a-mac-8a121bfe9d86
+	
+
+
+
 
 
