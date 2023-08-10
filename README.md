@@ -610,3 +610,145 @@ ___qRAID________________________________________________________________________
 
 	#Transfer file from local server to remout server
 		rsync -v -e "ssh -p2222" /home/localuser/testfile.txt remoteuser@X.X.X.X:~/transfer
+
+
+  	___qrsync_______________________________________________________
+	#https://www.linuxtechi.com/rsync-command-examples-linux/
+	#Transfer file from remout server to local server
+		rsync -v -e ssh remoteuser@X.X.X.X:/home/remoteuser/transfer/testfile.txt /home/localuser/
+		rsync -avu --bwlimit=5000 --chmod=Fu=rwx,Fg=r,Fo=r --progress /from_folder/ ~/destination_folder/
+	#rsync for resume download use "--partial"
+		rsync -azvvP /home/path/folder1/ /home/path/folder2
+
+	#rsync for cloud storage
+		rsync -azvvpu --delete -e "ssh -p443" ~/.A8fhd4ksDk root@ip-address:/home/
+		#--ignore-existing - copy only new file
+
+	#rsync exclude directorie
+		rsync -avzP --bwlimit=5000 --exclude {'file1.txt','dir1/*','dir2'} /source-directory /destination-directory
+		#example
+			rsync -avzP --exclude {'/.save/', '/save/'} ~/ /Volumes/hdd/john/
+		#rsync without recurcive ---> -d
+
+		#example exclude ONE directorie
+			rsync -avzP --exclude '/save/' ~/ /Volumes/hdd/john/
+
+	#rsync transfer file to server via socks5 proxy
+		rsync --progress -avrz -e 'ssh -p2244 -o ProxyCommand="nc -X 5 -x 127.0.0.1:5060 %h %p"' /Users/john/Downloads/test.mp4  admin@remoute-server:/name-folder/filename
+
+	___qhosts__/etc/hosts_______________________________________________
+	127.0.0.1 analytics.google.com
+	127.0.0.1 www.google-analytics.com
+	127.0.0.1 google-analytics.com
+	127.0.0.1 ssl.google-analytics.com
+
+
+___qExif___________________________________________________________
+	#Install ---> brew install exiftool
+	#Show all date for file ---> exiftool -time:all -a -G0:1 -s file.mp4
+	#Change exif set CreateDate = CreationDate (So the main is set CreateDate, CreationDate and FileModifyDate the date you'l need)
+		exiftool "-CreateDate<CreationDate" "-FileModifyDate<CreateDate" file.mp4
+
+	#Example, if Photo has a wrong time sequence
+		1. See (exiftool -time:all -a -G0:1 -s IMG_0531.mov) if CreationDate has right time then Step2 change "CreateDate" and "FileModifyDate"
+		2. exiftool "-CreateDate<CreationDate" "-FileModifyDate<CreationDate" file.mpr
+
+	#Manual set date
+		exiftool -AllDates="2013:08:27 08:50:14" ~/Camera3/Camera/IMG_8458_1.mov
+
+___qSMART__________________________________________________________
+	#install smart on centos ---> yum install smartmontools
+	#Show SMART HDD smart ---> smartctl -A /dev/sda 
+	#Show SMART HDD smart ---> smartctl -a disk3s2  
+	#The main parametr 5 - "Reallocated_Sector"
+	second 197 - "Current_Pending_Sector"
+
+	#insatall smart on macos ---> brew install smartmontools
+	#run -> smartctl -a disk0 (and watch "Percentage Used" if it more than 30% soom mac will die)
+
+
+ ___qMySQL_________________________________________________________________________________________________________
+------------------------------------------------------------------------------------------------------------------
+	#Connect to BD and make Query
+		mysql -u username -puserpass dbname -e "UPDATE mytable SET mycolumn = 'myvalue' WHERE id='myid'";
+		mysql --user=username --password=passwordtext basename
+		mysql --user=username --password=passwordtext basename -e "SELECT * FROM main WHERE id='1'";
+		mysql --user=username --password=passwordtext basename -e "SELECT * FROM user WHERE password='aaaaabbbbb'";
+		
+	#Show tables of database
+		#Enter in mysql
+		use name_of_database;
+		show tables;
+	#Show columns from [table name];
+		show columns from table;
+	
+	select post_text from posts where post_text like "%http:%" and id<100;
+	update posts SET post_text = REPLACE(post_text, 'http://name', 'https://name') WHERE post_text LIKE '%http://name%';
+	
+	#Replace
+	UPDATE main SET other_cont_en = REPLACE(other_cont_en, ' width="800" height="600"', '') WHERE INSTR(other_cont_en, '%width="800"%') > 0;
+	SELECT * FROM `main` WHERE `other_cont_en` like '% width="800" height="600"%'
+
+	#Make dump-file(backup base) with base MySQL  
+		mysqldump --single-transaction -u user -p DBNAME > backup.sql
+
+	#Recover from dump-file to MySQL
+		mysql basename -u username -p < base.sql
+	-------------------------------------------------------------------------------
+	/usr/bin/mysqladmin -u root password 'new-password'
+	mysql -u root -p
+	mysql> CREATE DATABASE name_bae;
+	mysqladmin -u root -p'oldpassword' password newpass
+	-------------------------------------------------------------------------------
+	#Install qMariaDB
+		yum remove mysql mysql-server
+		mv /var/lib/mysql /var/lib/mysql_old_backup
+		yum install mariadb-server -y
+		yum install mariadb -y
+		chmod -R 777 /var/lib/mysql/
+		systemctl enable mariadb.service
+		service mariadb start
+		/usr/bin/mysql_secure_installation
+
+		#Enter current password for root (enter for none): Enter
+		#Set root password? [Y/n]: Y
+		#New password: <your-password>
+		#Re-enter new password: <your-password>
+		#Remove anonymous users? [Y/n]: Y
+		#Disallow root login remotely? [Y/n]: Y
+		#Remove test database and access to it? [Y/n]: Y
+		#Reload privilege tables now? [Y/n]: Y
+
+	-------------------------------------------------------------------------------
+	#Reset password for MySQL
+		service mariadb stop
+		mysqld_safe --skip-grant-tables &
+		mysql -u root
+		mysql> use mysql;
+		mysql> update user set password=PASSWORD("NEW-ROOT-PASSWORD") where User='root';
+		mysql> flush privileges;
+		mysql> quit
+		service mariadb start
+		mysql -u root -p (check)
+	-------------------------------------------------------------------------------
+	#Create user and database
+		mysql -u root -p
+		GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' IDENTIFIED BY '5w7PJcCp';
+	#then login as new user ---> mysql -u newuser -p
+	#and create database for user ---> CREATE DATABASE `newuser`;
+	-------------------------------------------------------------------------------
+	#check and fix mysql errors and problem ---> mysql_upgrade -uroot -p
+	#chemk if service mariadb active ---> systemctl is-active mariadb
+
+	#drop database
+		mysql -u root -p
+		show databases;
+		drop database name; (if is there "-" use ---> drop database `name`;)
+
+
+	#ERROR mariadb cant start after Reset password for MySQL
+	#use ---> ps aux | grep -i mysql
+	#and kill all mysql processes and start MariaDB again	
+
+
+
