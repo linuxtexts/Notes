@@ -1094,6 +1094,301 @@ ___qbrew________________________________________________________________________
 	brew install --build-from-source ffmpeg
 
 
+___qterminal (qbash) _________________OTHER COMMANDS___________________________________________________________________
+-----------------------------------------------------------------------------------------------------------------------
+	#To watch / show function or other in bash 
+		type [function]
+		#Example ---> type youfunction
+		#Show all function decleared in bash ---> typeset -f
+
+	#Run breoser vis ssh
+		export DISPLAY=:0	
+		firefox &
+
+	#Show execute process (trasert mode)
+			set -x
+		#Turn off
+			set +x
+
+	#Get only the file name without path
+		basename
+
+		"A && B" Run B if A succeeded
+		"A || B" Run B if A failed
+		"A &" Run A in background.
+
+	#To know wich command belong to wich packege (watch)
+		dpkg -S 'which watch'
+
+	#Return to previous directory/folder ---> cd -
+
+    	#Do 1+1
+       		ttt=$((1+1));echo $ttt
+
+    	#Current time/date Plus one hour
+       		echo -n $(($(date +'%l')+1));echo -n $(date +' :%m %p')' '; echo -n $(date +'%A %d');
+
+    	#Cut last symbol in line
+       		sed 's/.$//'
+
+    	#Check if var not null
+		if [[ -z $var ]];then echo 'var is null';fi
+		if [[ -n $var ]];then echo 'var is not null';fi
+
+    	#How to check if a string contains a substring in Bash
+		string='My long string'
+		if [[ $string == *"My long"* ]]; then
+  		echo "It's there!"
+		fi
+    	#or
+		string='My long string';if test "$string" = *"My long"*;then echo "It's there!";fi
+
+    	#Check if a File or Directory Exists (https://linuxize.com/post/bash-check-if-file-exists/)
+		if [[ -f "$FILE" ]]; then
+     			echo "$FILE exist"
+ 		fi
+
+    	#Replace (http://qaru.site/questions/4981/how-to-use-double-or-single-brackets-parentheses-curly-braces)
+		sed -i -e 's|old_text|new_text|g' path_to_file
+    	#Replace with echo
+		$ var="abcde"; echo ${var/de/12}
+		abc12
+
+	#Test redirect
+		curl -I http://converterlab.net/
+
+	#qbackground works
+	#run script in background ---> nohup command &>/dev/null &
+
+	#watch jobs in background ---> jobs
+	#Moving Background Processes to the Foreground ---> fg %number-job
+	#Moveng the processes to background ---> CTRL-Z
+	#Start pocesses in the foreground ---> bg 
+	#Kill background processes ---> watch number (jobs) then ---> kill %number-job 
+
+	#cursor navigation in terminal	
+		^A: go to the beginning of line
+		^E: go to the end of line
+		Alt-B: skip one word backward
+		Alt-F: skip one word forward
+		Esc-B: skip one word backward (on MacOS)
+		Esc-F: skip one word forward (on MacOS)
+		^U: delete to the beginning of line
+		^K: delete to the end of line
+		Alt-D: delete to the end of word
+		^J: like Enter
+		^H: delete symbol like backspace
+		^W: delete word
+		^U: delete line
+		^\: more powerfull than ^C
 
 
+	#qlogs all logs here (/etc/rsyslog.conf)
+	#log rotation here /etc/logrotate.d/*
+		https://www.digitalocean.com/community/tutorials/how-to-manage-logfiles-with-logrotate-on-ubuntu-16-04
+
+	#qtime 	     ---> date
+	#change time ---> date MMDDhhmmCCYY.ss 
+	(MM - month, hh - hours, mm - minutes, CCYY - year, ss - second)
+
+
+___qsort_________________________________________________
+	sort -k2 -n -t '['
+
+	-k sort by column number
+	-n sort by numbers (from 1 to 9)
+	-t custom separator
+
+___qcut__________________________________________________
+	cut -d ">" -f4
+	-d delete separator
+	-f the number of columb that shows after
+
+___quniq_________________________________________________
+	uniq -c 
+	-c count uniq element
+
+___qawk__________________________________________________
+	#about qawk - https://www.shellhacks.com/awk-print-column-change-field-separator-linux-bash/
+		$1 - take first field
+		$(NF) - take the last field
+		$(NF-1) - take the last -1 field
+
+	#print column 1 and 2 with " - " separator, and prints column also seperated with space
+		awk -F ' ' '{print $1" - "$2}'
+
+	#take only the last field
+		awk -F ' ' '{print $NF}' 
+
+	#take the last - 1 field
+		awk -F ' ' '{print $(NF-1)}' 
+
+___qln________qsymlink___________________________________
+	#Make symlinked ---> (sudo ln -s /symlink  /folder)
+	#Show the path for ln symbollind ---> readlink -f symlinkName
+
+	------------------qpermission files and dirs---------------------------------------
+	#To change all the directories to 755 (drwxr-xr-x) ---> find /opt/lampp/htdocs -type d -exec chmod 755 {} \;
+	#To change all the files to 644 (-rw-r--r--) 	   ---> find /opt/lampp/htdocs -type f -exec chmod 644 {} \;
+	------------------------------------------------------------------------------
+
+	#add user
+		adduser admin
+		passwd admin
+
+	#change default user home folder ---> usermod -d /new/home admin
+
+	#Watch all service
+		chkconfig --list
+		chkconfig nginx on
+		systemctl list-unit-files | grep enabled
+	#show is service (mariadb) is active service
+		systemctl is-active mariadb
+
+	#show cpu in mac	     ---> sysctl -n machdep.cpu.brand_string
+
+	#RUN command from ROOT ---> su -c command root
+	#Watch Last reboot     ---> date -d "$(</proc/uptime awk '{print $1}') seconds ago"
+	#error journal 		    ---> journalctl -xe
+	#Ram Test memory test linux ---> memtester 1024 1
+
+
+___qLocale____________________________________________________________________                         
+	https://www.shellhacks.com/linux-define-locale-language-settings/
+
+	#list of all locales
+		localedef --list-archive
+
+	#Installed locales
+		locale -a | grep hi_IN.utf8
+
+	#set language for current session
+		LANG=en_US.utf8 or LANG=ru_RU.utf8
+
+	#In Centos add/create to /etc/environment
+		LANG=en_US.UTF-8
+		LC_ALL=en_US.UTF-8
+
+
+___qSCREEN____________________________________________________________________________________________________________
+----------------------------------------------------------------------------------------------------------------------
+	#run command at every windows (execute from screen with :[command]) ---> at "#" stuff "source ~/Documents/save/1/alias"
+        #execute command for window 0 ---> screen -S SessionName -p0 -X stuff "command"$(echo -ne '\015')
+		screen -S ses -p [0-4] -X stuff "ls -la"$(echo -ne '\015')
+		screen -S ses -X at "#" stuff "c"$(echo -ne '\015')
+
+	#Set password for screen session ---> ^A and type ":password"
+	#config file /etc/screenrc
+	#kill session 	 --->  screen -X -S [session # you want to kill] quit
+	#or 		 ---> ^D then "\"
+	#kill all screen ---> pkill screen
+	#connect to session ---> screen -x [screen session]
+	#New screen session ---> screen -S [new session name]
+	#Rename screen session ---> :sessionname [name]
+		#or ---> screen -S old_session_name -X sessionname new_session_name
+	#Move windows to another number ---> :number 7 (in move current windows to '7' and wndows '7' to current windows)
+	#Execute command to every windows ---> :at "#" stuff "ls -l^M"
+
+	#WATCH HELP ^A then ?	
+	#To split vertically 		  ---> ^A |.
+	#To split horizontally 		  ---> ^A S
+	#To unsplit 			  ---> ^A Q
+	#Resize				  :resize 20
+	#Split				  :split
+	#Unsplit current window		  :remove
+	#To switch from one to the other  ---> ^A then Tab (or ^I)
+	#To close the pane that has focus ---> ^A X
+	#Set windows title 		  ---> :title NewWindowsTitle
+	#Lock session			  ---> ^A x
+	#Kill window 			  ---> ^A k or (Ctrl-a :kill)
+	#monitor window for silence	  ---> C-a _
+	#redraw window 			  ---> C-a C-l
+	#enable logging in the screen session ---> C-a H 
+	#change to window by number or name ---> C-a ' <number or title>
+
+	http://www.softpanorama.org/Utilities/Screen/screenrc_examples.shtml
+.................................................................................................START......vim ~/.screenrc
+#terminfo * F9=\E[20~Q
+#bindkey -k F9 next
+#
+#password ba1f2511fc30423bdbb183fe33f3dd0f
+#escape ``
+escape ^Kk
+#escape Ctrl+\
+#escape ^\\
+
+bind = resize =
+bind + resize +2
+bind - resize -2
+bind _ resize max
+
+bindkey -k k1 :"pwd"
+bind '"\e[24~":"foobar"'
+set password none
+
+
+#screen -t net 
+#screen -t 1 #irssi
+#screen -t 2
+#screen -t 3
+#screen -t 4
+altscreen on
+term screen-256color
+bind ',' prev
+bind '.' next
+#
+#change the hardstatus settings to give an window list at the bottom of the
+#screen, with the time and date and with the current window highlighted
+hardstatus alwayslastline
+#hardstatus string '%{= kG}%-Lw%{= kW}%50> %n%f* %t%{= kG}%+Lw%< %{= kG}%-=%c:%s%{-}'
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+#caption always "%{= kw}%-w%{= gW}%n %t%{-}%+w %-= activity - %Y-%m-%d %C:%s"
+.......................................................................................................................END.
+.................................................................................................................screenrc centos
+escape ^Jj
+bind = resize =
+bind + resize +1
+bind - resize -1
+bind _ resize max
+
+caption always "%{= kw}%-w%{= gW}%n %t%{-}%+w %-= activity - %Y-%m-%d %C:%s"
+...................................................................................................................................
+	
+ 
+ 	#New terminal 		---> ^A c
+	#Next windows 		---> ^A space.
+	#Previous windows	---> ^A backspace.
+	#Next windows 		---> ^A then [n]. (works for n∈{0,1…9})
+	#Switch between terminals using list ---> ^A+a then " (useful when more than 10 terminals)
+	#Send ^A to the underlying terminal ^A then a.
+
+
+___qarh (q7zip,tar.gz)_qtar__qzip______________________________________________________________________________________
+-----------------------------------------------------------------------------------------------------------------------
+	#Unarhiv 7zip file with password (q7z,qz7)
+	7z -pPASSWORD x file.zip
+
+	#pack   ---> tar -zcvf output_file.tar.gz /foder_what_to_encrypt
+	       |   | gzip vds1
+	#unpack ---> tar zxvf hydra-4.1-src.tar.gz
+
+	unrar e file.rar
+___qDD________________________________________________________________________________________________________________
+----------------------------------------------------------------------------------------------------------------------
+	https://habr.com/ru/post/117050/
+
+	#Clone hdd from sda to sdb ---> sudo dd if=/dev/sda of=/dev/sdb bs=1M conv=noerror,sync status=progress
+		#noerror - ignore errors
+		#sync: сообщает утилите dd о необходимости заполнения блоков нулями в случае возникновения ошибок чтения
+
+	#Delete ALL data on HDD ---> dd if=/dev/zero of=/dev/sda bs=4k
+				or ---> dd if=/dev/zero of=/dev/Pd3 bs=1M count=999999999999
+
+	#Delete folder forever ---> for filename in /pathtofolder/*; do dd if=/dev/zero of="$filename" bs=1k count=200024; done
+
+___qJournalCtl________________________________________________________________________________________________________
+----------------------------------------------------------------------------------------------------------------------
+	Retain only the past two days	---> journalctl --vacuum-time=2d
+	Retain only the past 500 MB	---> journalctl --vacuum-size=500M
+	https://unix.stackexchange.com/questions/139513/how-to-clear-journalctl#194058
 
