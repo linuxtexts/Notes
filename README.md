@@ -990,6 +990,110 @@ ___qWireGuard___________________________________________________________________
 	
 
 
+___qVNC on remoute server__________________________________________________________________________________________
+	#install vnc server
+		https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
+	#make tunel for vnc viewer on local pc
+		ssh -i /Volumes/reserv/save/.ssh/id_rsa -L59000:localhost:5901 root@ip-address -Nf
+
+	#kill VNC
+		vncserver -kill :1
+
+	#start VNC on localhost
+		vncserver -localhost
+
+
+___qbase64__________________________________________________________________________________________________________
+	#encode to base64 ---> echo password | base64
+	#decode from base64 ---> echo 'password' | base64 --decode
+
+
+
+___qnetwork____________________________NETWORK______________________________________________________________________
+--------------------------------------------------------------------------------------------------------------------
+	#Change hostname - https://www.tecmint.com/set-change-hostname-in-centos-7/
+	#network (NFS - network file system)
+		watch 'netstat -na | grep -v 8080 | grep tcp | sort|grep EST'
+
+	#check all connection status
+		netstat -tan | awk '{print $6}' | sort | uniq -c
+
+	#Disable ping icmp (twoside ping)
+		https://xakinfo.ru/os/kak-ubrat-opredelenie-tunnelja-dvustoronnij-ping-v-vpn/
+		iptables -A INPUT --proto icmp -j DROP
+
+	#Show all open ports
+		netstat -nap | grep LISTEN
+		or
+		netstat -lntup
+
+	#Restart network
+		service network restart
+
+	#Show all ip adress on server
+		ip addr show
+
+	#Show route table in mac os
+		netstat -rn
+
+	#Chenge default route
+		route delete default
+		route add default 192.168.0.1
+	or
+		route change default -interface $INTF
+		route change 192.168.0.0/16 -interface $INTF
+
+	#Configure Network config (Red Hat)
+		#https://www.cyberciti.biz/faq/howto-setting-rhel7-centos-7-static-ip-configuration/
+		/etc/sysconfig/network-scripts/ifcfg-eth0
+		IPADDR=192.168.1.200
+		NETMASK=255.255.255.0
+		GATEWAY=192.168.1.1
+		DNS1=1.0.0.1
+		#or use ---> nmtui
+
+	#DISABLE ipv6 in Red Hat
+		sysctl -w net.ipv6.conf.all.disable_ipv6=1
+		sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+	#Disable ipv6 (Ubuntu)
+		sudo sh -c 'echo 1 > /proc/sys/net/ipv6/conf/eth0/disable_ipv6'
+
+	#Disable ipv6 (Android)
+		echo 0 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
+		echo 1 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+
+	#Conect WI-FI via terminal ---> http://rus-linux.net/MyLDP/consol/wifi-from-command-line.html
+	
+	#Set DNS 		   ---> /etc/resolv.conf
+
+		netstat -nlpt (t - TCP pocket, p - show program using connection, l - Show only listening sockets)
+
+	#REAL TIME network monitor ---> watch lsof -i
+	#REAL TIME network monitor ---> watch 'netstat -nap | grep -v 8080 | grep tcp | sort'
+
+	#Show all route        ---> netstat -rn
+	#Show all route        ---> route -n
+	#Show default geatways ---> ip route show 
+
+	#Show specifications of WI-FI, ethernet -->ethtool -i [wlan0]
+
+	#To show what SERVICE using internet -->lsof -P -i -n | cut -f 1 -d " " | uniq
+	#or netstat -nap | grep -v '127.0.0.1' | grep tcp | grep -v nginx | grep -v ':80'
+
+___qtcpdump__________________________________________________________________________________________________________
+#Whatch all dns querys with tcpdump
+	sudo tcpdump -i en0 port 53
+
+___qwine_____________________________________________________________________________________________________________
+#install
+	brew cask install wine-stable
+
+___qbrew____________________________________________________________________________________________________________
+#brew install from source example
+	brew install --build-from-source ffmpeg
+
+
 
 
 
