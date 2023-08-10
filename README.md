@@ -1392,3 +1392,44 @@ ___qJournalCtl__________________________________________________________________
 	Retain only the past 500 MB	---> journalctl --vacuum-size=500M
 	https://unix.stackexchange.com/questions/139513/how-to-clear-journalctl#194058
 
+
+___qCRON________________________________________________________________________________________________________
+----------------------------------------------------------------------------------------------------------------
+	crontab -e
+	#Clear traffic statistic at first day of every month ---> 0 0 1 * * iptables -Z INPUT
+	#Run script every 20 min ---> */20 * * * * /root/run.sh
+	#Run script every 2 days in 23:00 ---> 0 23 */2 * * /root/run.sh
+
+	#restart cron centos
+		service crond restart
+
+	@reboot /home/user/startup.sh
+
+	open crontab by nano ---> export VISUAL=nano; crontab -e
+	open crontab by Vim  ---> export VISUAL=vim; crontab -e
+
+	Job every 6 hours ---> 0 */6 * * * /usr/bin/php /script.php
+	drop count of traffic for INPUT to ZERO every first day each month ---> 0 0 1 * * iptables -Z INPUT
+	
+
+	SHELL=/bin/bash
+	PATH=/sbin:/bin:/usr/sbin:/usr/bin
+	MAILTO=root
+	# For details see man 4 crontabs
+
+	# Example of job definition:
+	# .---------------- minute (0 - 59)
+	# |  .------------- hour (0 - 23)
+	# |  |  .---------- day of month (1 - 31)
+	# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+	# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+	# |  |  |  |  |
+	# *  *  *  *  * user-name  command to be executed
+
+
+
+
+	#crontab on server_______________________________________________________________________________
+20 4 * * 1 /usr/bin/certbot renew >> /var/log/le-renew.log
+25 4 * * 1 /usr/bin/systemctl restart nginx
+
