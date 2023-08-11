@@ -98,7 +98,7 @@ ___qIPTABLES____________________________________________________________________
 			systemctl enable iptables
 			systemctl enable ip6tables
 
-........................................................................ /etc/sysconfig/iptables
+	........................................................................ /etc/sysconfig/iptables
 
 	*filter
 	:INPUT ACCEPT [0:0]
@@ -111,7 +111,7 @@ ___qIPTABLES____________________________________________________________________
 	-A INPUT -j REJECT --reject-with icmp-port-unreachable
 	COMMIT
 
-........................................................................ /etc/sysconfig/ip6tables
+	........................................................................ /etc/sysconfig/ip6tables
 
 	*filter
 	:INPUT ACCEPT [0:0]
@@ -124,7 +124,7 @@ ___qIPTABLES____________________________________________________________________
 	-A INPUT -j REJECT --reject-with icmp6-adm-prohibited
 	COMMIT
 
-............................................................................................. END
+	............................................................................................. END
 
 		2. Save rules (it save rules to /etc/sysconfig/iptables) ---> service iptables save
 		3. Restart ---> service iptables restart
