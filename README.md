@@ -1,5 +1,5 @@
 ___qsc___________________________Spreadsheet Calculator_____________________________________________________________
---------------------------------------------------------------------------------------------------------------------
+
         https://github.com/n-t-roff/sc
         https://www.maketecheasier.com/linux-command-line-spreadsheets/
         https://www.linuxjournal.com/article/10699
@@ -37,10 +37,13 @@ ___qsc___________________________Spreadsheet Calculator_________________________
 
 
 ___qsyncthing___________________________________________________________________________________________________
+
 	brew install syncthing
 	http://127.0.0.1:8384/
 	#Action -> Settings -> Connection -> disable "Enable Relaying"
+ 
 ___qiTerm_______________________________________________________________________________________________________
+
 	Preferences -> Advanced -> search "restor" and turnoff all
 	split pane vertical ---> cmd+d
 	split pane horisontal ---> Shift+cmd+d
@@ -49,6 +52,7 @@ ___qiTerm_______________________________________________________________________
 	Bind Key -> Preferences -> Key -> Plus (+) -> Run Coprocess -> Run Commane and Keyboard Shortcuts
 
 ___qmpv_________________________________________________________________________________________________________
+
 	brew uninstall ffmpeg
 	brew install mpv
 	#record video from youtube with mpv ---> mpv --record-file=video.mkv https://www.youtube.com/watch?v=…
@@ -57,18 +61,20 @@ ___qmpv_________________________________________________________________________
 	#install mpv-video-cutter   
 
 	................................................. ~/.config/mpv/mpv.conf................................
-screenshot-directory="~/Documents/save/img"
-screenshot-format=png
-screenshot-template="%F:%P"
-volume=0
-save-position-on-quit
-profile=pseudo-gui
+ 
+	screenshot-directory="~/Documents/save/img"
+	screenshot-format=png
+	screenshot-template="%F:%P"
+	volume=0
+	save-position-on-quit
+	profile=pseudo-gui
 	........................................................................................................
 	#set to ~/.config/mpv/input.conf instead LEFT and RIGHT
 		l no-osd seek  1 exact
 		h no-osd seek  -1 exact
 
 ___Terminal_____________________________________________________________________________________________________
+
 	Preferencec -> Window -> Restore text when reopening windows (Turn it off)
 
         e — edit a numeric value.
