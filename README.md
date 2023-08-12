@@ -433,3 +433,464 @@ ___qrsync_______________________________________________________
 	127.0.0.1 www.google-analytics.com
 	127.0.0.1 google-analytics.com
 	127.0.0.1 ssl.google-analytics.com
+
+
+___qExif___________________________________________________________
+
+	#Install ---> brew install exiftool
+	#Show all date for file ---> exiftool -time:all -a -G0:1 -s file.txt
+	#Change exif set CreateDate = CreationDate (So the main is set CreateDate, CreationDate and FileModifyDate the date you'l need)
+		exiftool "-CreateDate<CreationDate" "-FileModifyDate<CreateDate" file.mp4
+
+	#Example, if Photo has a wrong time sequence
+		1. See (exiftool -time:all -a -G0:1 -s IMG_0531.mov) if CreationDate has right time then Step2 change "CreateDate" and "FileModifyDate"
+		2. exiftool "-CreateDate<CreationDate" "-FileModifyDate<CreationDate" file.mpr
+
+	#Manual set date
+		exiftool -AllDates="2013:08:27 08:50:14" ~/Camera3/Camera/IMG_8458_1.mov
+
+___qSMART__________________________________________________________
+
+	#install smart on centos ---> yum install smartmontools
+	#Show SMART HDD smart ---> smartctl -A /dev/sda 
+	#Show SMART HDD smart ---> smartctl -a disk3s2  
+	#The main parametr 5 - "Reallocated_Sector"
+	second 197 - "Current_Pending_Sector"
+
+	#insatall smart on macos ---> brew install smartmontools
+	#run -> smartctl -a disk0 (and watch "Percentage Used" if it more than 30% soom mac will die)
+
+
+___qMySQL_________________________________________________________________________________________________________
+
+	#Connect to BD and make Query
+		mysql -u username -puserpass dbname -e "UPDATE mytable SET mycolumn = 'myvalue' WHERE id='myid'";
+		mysql --user=username --password=passwordtext basename
+		mysql --user=username --password=passwordtext basename -e "SELECT * FROM main WHERE id='1'";
+		mysql --user=username --password=passwordtext basename -e "SELECT * FROM user WHERE password='aaaaabbbbb'";
+		
+	#Show tables of database
+		#Enter in mysql
+		use name_of_database;
+		show tables;
+
+	#Show columns from [table name];
+		show columns from table;
+	
+	select post_text from posts where post_text like "%http:%" and id<100;
+	update posts SET post_text = REPLACE(post_text, 'http://name', 'https://name') WHERE post_text LIKE '%http://name%';
+	
+	#Replace
+	UPDATE main SET other_cont_en = REPLACE(other_cont_en, ' width="800" height="600"', '') WHERE INSTR(other_cont_en, '%width="800"%') > 0;
+	SELECT * FROM `main` WHERE `other_cont_en` like '% width="800" height="600"%'
+
+	#Make dump-file(backup base) with base MySQL  
+		mysqldump --single-transaction -u user -p DBNAME > backup.sql
+
+	#Recover from dump-file to MySQL
+		mysql basename -u username -p < base.sql
+	-------------------------------------------------------------------------------
+	/usr/bin/mysqladmin -u root password 'new-password'
+	mysql -u root -p
+	mysql> CREATE DATABASE name_bae;
+	mysqladmin -u root -p'oldpassword' password newpass
+	-------------------------------------------------------------------------------
+	#Install qMariaDB
+		yum remove mysql mysql-server
+		mv /var/lib/mysql /var/lib/mysql_old_backup
+		yum install mariadb-server -y
+		yum install mariadb -y
+		chmod -R 777 /var/lib/mysql/
+		systemctl enable mariadb.service
+		service mariadb start
+		/usr/bin/mysql_secure_installation
+
+		#Enter current password for root (enter for none): Enter
+		#Set root password? [Y/n]: Y
+		#New password: <your-password>
+		#Re-enter new password: <your-password>
+		#Remove anonymous users? [Y/n]: Y
+		#Disallow root login remotely? [Y/n]: Y
+		#Remove test database and access to it? [Y/n]: Y
+		#Reload privilege tables now? [Y/n]: Y
+
+	-------------------------------------------------------------------------------
+	#Reset password for MySQL
+		service mariadb stop
+		mysqld_safe --skip-grant-tables &
+		mysql -u root
+		mysql> use mysql;
+		mysql> update user set password=PASSWORD("NEW-ROOT-PASSWORD") where User='root';
+		mysql> flush privileges;
+		mysql> quit
+		service mariadb start
+		mysql -u root -p (check)
+	-------------------------------------------------------------------------------
+	#Create user and database
+		mysql -u root -p
+		GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' IDENTIFIED BY '5w7PJcCp';
+	#then login as new user ---> mysql -u newuser -p
+	#and create database for user ---> CREATE DATABASE `newuser`;
+	-------------------------------------------------------------------------------
+	#check and fix mysql errors and problem ---> mysql_upgrade -uroot -p
+	#chemk if service mariadb active ---> systemctl is-active mariadb
+
+	#drop database
+		mysql -u root -p
+		show databases;
+		drop database name; (if is there "-" use ---> drop database `name`;)
+
+
+	#ERROR mariadb cant start after Reset password for MySQL
+	#use ---> ps aux | grep -i mysql
+	#and kill all mysql processes and start MariaDB again	
+
+
+___qWireGuard_______________________________________________________________________________________________________
+
+	#Install Centos7
+	#https://www.wireguard.com/install/#red-hat-enterprise-linux-7-centos-7-module-tools
+	#https://www.cyberciti.biz/faq/ubuntu-20-04-set-up-wireguard-vpn-server/
+
+	sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+	sudo curl -o /etc/yum.repos.d/jdoss-wireguard-epel-7.repo https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo
+	sudo yum install wireguard-dkms wireguard-tools
+
+
+	#install server then install desctop ubuntu (link install any ubuntu desctop - https://www.makeuseof.com/install-desktop-environment-gui-ubuntu-server/)
+		sudo apt install ubuntu-desktop
+
+
+	#Install wireguard (https://www.the-digital-life.com/wireguard-installation-and-configuration/)
+	# https://www.youtube.com/watch?v=bVKNSf1p1d0
+
+	1. Install WireGuard on Server and Client
+		sudo apt update && sudo apt install wireguard
+	2. Generate keys on Server and Client
+		wg genkey | tee privatekey | wg pubkey > publickey
+	3. Configure server (/etc/wireguard/wg0.conf)
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		PrivateKey=<server-private-key>
+		Address=<server-ip-address>/<subnet>
+		SaveConfig=true
+		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o <public-interface> -j MASQUERADE;
+		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o <public-interface> -j MASQUERADE;
+		ListenPort = 51820
+		----------------------------------------------------------------------------------------------------------------
+
+		---------------Example------------------------------------------------------------------------------------------
+		[Interface]
+		Address = 10.0.0.1/8
+		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE;
+		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE;
+		ListenPort = 51820
+		PrivateKey = cMe2MDoXJ8be09bYhd0azj/PPJEPGi1riHEpnYP8lVI=
+
+		[Peer]
+		PublicKey = J+RoaunI4NENqLrRMsc3ofz/cfW/KYa3etpRfFHhAmY=
+		AllowedIPs = 10.0.0.2/32
+		----------------------------------------------------------------------------------------------------------------
+	4. Start wg on Server
+			wg-quick up wg0
+		#or for Mac OS
+			wg-quick up ~/.config/wireguard/wg0.conf
+
+	5. Configure client (/etc/wireguard/wg0.conf)
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		PrivateKey = <client-private-key>
+		Address = <client-ip-address>/<subnet>
+
+		[Peer]
+		PublicKey = <server-public-key>
+		Endpoint = <server-public-ip-address>:51820
+		AllowedIPs = 0.0.0.0/0
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		Address = 10.0.0.2/8
+		PrivateKey = eIurbkxVvISdOuiGnr4fGkjofbvueoC/qeNGy45l61A=
+
+		[Peer]
+		PublicKey = fUDlm68ko0wxGBNA7cWj1V1sBoH5bQl8suCioYRVjzU=
+		AllowedIPs = 0.0.0.0/0
+		Endpoint = 94.130.176.20:51820
+		PersistentKeepalive = 30
+		----------------------------------------------------------------------------------------------------------------
+
+	6. Start wg on Client
+			wg-quick up wg0
+		#or for Mac OS
+			wg-quick down ~/.config/wireguard/wg0.conf
+	
+	7. Configure on server allow ip forward in cat /proc/sys/net/ipv4/ip_forward set "1"
+		sudo sysctl -w net.ipv4.ip_forward=1
+		sudo sysctl -p
+
+	---------------------------------------------------------------------------------------------------------------------
+	#Client for Mac - https://medium.com/@headquartershq/setting-up-wireguard-on-a-mac-8a121bfe9d86
+
+
+___qVNC on remoute server__________________________________________________________________________________________
+
+	#install vnc server
+		https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
+	#make tunel for vnc viewer on local pc
+		ssh -i ~/.ssh/id_rsa -L59000:localhost:5901 root@ip-address -Nf
+
+	#kill VNC
+		vncserver -kill :1
+
+	#start VNC on localhost
+		vncserver -localhost
+
+
+___qbase64__________________________________________________________________________________________________________
+
+	#encode to base64 ---> echo password | base64
+	#decode from base64 ---> echo 'password' | base64 --decode
+
+___qsshfs___________________________________________________________________________________________________________
+
+	#Install sshfs on Centos 7
+		yum install epel-release
+		yum install fuse-sshfs
+	#Mount
+		sshfs foobar@remote.server:/home/foobar /mnt
+
+___qnetwork____________________________NETWORK______________________________________________________________________
+
+	#Change hostname - https://www.tecmint.com/set-change-hostname-in-centos-7/
+	#network (NFS - network file system)
+		watch 'netstat -na | grep -v 8080 | grep tcp | sort|grep EST'
+
+	#check all connection status
+		netstat -tan | awk '{print $6}' | sort | uniq -c
+
+	#Disable ping icmp (twoside ping)
+		https://xakinfo.ru/os/kak-ubrat-opredelenie-tunnelja-dvustoronnij-ping-v-vpn/
+		iptables -A INPUT --proto icmp -j DROP
+
+	#Show all open ports
+		netstat -nap | grep LISTEN
+		or
+		netstat -lntup
+
+	#Restart network
+		service network restart
+
+	#Show all ip adress on server
+		ip addr show
+
+	#Show route table in mac os
+		netstat -rn
+
+	#Chenge default route
+		route delete default
+		route add default 192.168.0.1
+	or
+		route change default -interface $INTF
+		route change 192.168.0.0/16 -interface $INTF
+
+	#Configure Network config (Red Hat)
+		#https://www.cyberciti.biz/faq/howto-setting-rhel7-centos-7-static-ip-configuration/
+		/etc/sysconfig/network-scripts/ifcfg-eth0
+		IPADDR=192.168.1.200
+		NETMASK=255.255.255.0
+		GATEWAY=192.168.1.1
+		DNS1=1.0.0.1
+		#or use ---> nmtui
+
+	#DISABLE ipv6 in Red Hat
+		sysctl -w net.ipv6.conf.all.disable_ipv6=1
+		sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+	#Disable ipv6 (Ubuntu)
+		sudo sh -c 'echo 1 > /proc/sys/net/ipv6/conf/eth0/disable_ipv6'
+
+	#Disable ipv6 (Android)
+		echo 0 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
+		echo 1 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+
+	#Conect WI-FI via terminal ---> http://rus-linux.net/MyLDP/consol/wifi-from-command-line.html
+	
+	#Set DNS 		   ---> /etc/resolv.conf
+
+		netstat -nlpt (t - TCP pocket, p - show program using connection, l - Show only listening sockets)
+
+	#REAL TIME network monitor ---> watch lsof -i
+	#REAL TIME network monitor ---> watch 'netstat -nap | grep -v 8080 | grep tcp | sort'
+
+	#Show all route        ---> netstat -rn
+	#Show all route        ---> route -n
+	#Show default geatways ---> ip route show 
+
+	#Show specifications of WI-FI, ethernet -->ethtool -i [wlan0]
+
+	#To show what SERVICE using internet -->lsof -P -i -n | cut -f 1 -d " " | uniq
+	#or netstat -nap | grep -v '127.0.0.1' | grep tcp | grep -v nginx | grep -v ':80'
+
+___qtcpdump__________________________________________________________________________________________________________
+
+	#Whatch all dns querys with tcpdump
+	sudo tcpdump -i en0 port 53
+
+___qwine_____________________________________________________________________________________________________________
+
+	#install
+	brew cask install wine-stable
+
+___qbrew____________________________________________________________________________________________________________
+
+	#brew install from source example
+	brew install --build-from-source ffmpeg
+
+___qwindows make usb with windows setup__________________________________________________
+
+	diskutil eraseDisk MS-DOS "WIN10" MBR /dev/disk2
+	diskutil eraseDisk MS-DOS "WIN10" GPT /dev/disk2
+	#or
+	diskutil eraseDisk ExFAT "WIN10" GPT /dev/disk2
+
+	hdiutil mount ~/Downloads/Win10_1903_V1_English_x64.iso
+	cp -rp /Volumes/CCCOMA_X64FRE_EN-US_DV9/* /Volumes/WIN10/	
+
+	#remove hebirnate
+		sudo pmset -a sleep 0; sudo pmset -a hibernatemode 0; sudo pmset -a disablesleep 1;
+	#enable 
+		sudo pmset -b disablesleep 0;sudo pmset -b sleep 5;
+
+___qUbuntu_________________________________________________________________________________________
+
+	#Replace Alt and command (the interrupt command will replaced from Ctrl+c to Shift+Ctrl+c)
+
+	............................................................................................. vim ~/.Xmodmap
+	clear control
+	clear mod4
+
+	keycode 105 =
+	keycode 206 =
+
+	keycode 133 = Control_L NoSymbol Control_L
+	keycode 134 = Control_R NoSymbol Control_R
+	keycode 37 = Super_L NoSymbol Super_L
+
+	add control = Control_L
+	add control = Control_R
+	add mod4 = Super_L
+	............................................................................................................
+	xmodmap ~/.Xmodmap
+
+	#Disable Double Tap (need install synclient) https://askubuntu.com/questions/939065/disable-double-tap-but-keep-one-tap-to-click-enabled-on-touchpad
+	synclient MaxTapMove=2
+
+	#run script start.sh at boot
+		echo "script body" > ~/start.sh
+		cp ~/start.sh /etc/init.d/start.sh
+		sudo update-rc.d start.sh defaults
+
+	---------------------------------------------------------
+	install Hardware Sensor Indicator
+	------------------------------------------------------------------------------------------
+	qi3 windows tail manager (HOTKEYS - https://i3wm.org/docs/refcard.html)
+	tail manager yabai - https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
+	sudo apt install i3
+	/usr/bin/i3-config-wizard
+
+___qterminal (qbash) _________________OTHER COMMANDS___________________________________________________________________
+
+	#To watch / show function or other in bash 
+		type [function]
+		#Example ---> type youfunction
+		#Show all function decleared in bash ---> typeset -f
+
+	#Run browser vis ssh
+		export DISPLAY=:0	
+		firefox &
+
+	#Show execute process (trasert mode)
+			set -x
+		#Turn off
+			set +x
+
+	#Get only the file name without path
+		basename
+
+		"A && B" Run B if A succeeded
+		"A || B" Run B if A failed
+		"A &" Run A in background.
+
+	#To know wich command belong to wich packege (watch)
+		dpkg -S 'which watch'
+
+	#Return to previous directory/folder ---> cd -
+
+    	#Do 1+1
+       		ttt=$((1+1));echo $ttt
+
+    	#Current time/date Plus one hour
+       		echo -n $(($(date +'%l')+1));echo -n $(date +' :%m %p')' '; echo -n $(date +'%A %d');
+
+    	#Cut last symbol in line
+       		sed 's/.$//'
+
+    	#Check if var not null
+		if [[ -z $var ]];then echo 'var is null';fi
+		if [[ -n $var ]];then echo 'var is not null';fi
+
+    	#How to check if a string contains a substring in Bash
+		string='My long string'
+		if [[ $string == *"My long"* ]]; then
+  		echo "It's there!"
+		fi
+    	#or
+		string='My long string';if test "$string" = *"My long"*;then echo "It's there!";fi
+
+    	#Check if a File or Directory Exists (https://linuxize.com/post/bash-check-if-file-exists/)
+		if [[ -f "$FILE" ]]; then
+     			echo "$FILE exist"
+ 		fi
+
+    	#Replace (http://qaru.site/questions/4981/how-to-use-double-or-single-brackets-parentheses-curly-braces)
+		sed -i -e 's|old_text|new_text|g' path_to_file
+
+    	#Replace with echo
+		$ var="abcde"; echo ${var/de/12}
+		abc12
+
+	#Test redirect
+		curl -I http://converterlab.net/
+
+	#qbackground works
+	#run script in background ---> nohup command &>/dev/null &
+
+	#watch jobs in background ---> jobs
+	#Moving Background Processes to the Foreground ---> fg %number-job
+	#Moveng the processes to background ---> CTRL-Z
+	#Start pocesses in the foreground ---> bg 
+	#Kill background processes ---> watch number (jobs) then ---> kill %number-job 
+
+	#cursor navigation in terminal	
+		^A: go to the beginning of line
+		^E: go to the end of line
+		Alt-B: skip one word backward
+		Alt-F: skip one word forward
+		Esc-B: skip one word backward (on MacOS)
+		Esc-F: skip one word forward (on MacOS)
+		^U: delete to the beginning of line
+		^K: delete to the end of line
+		Alt-D: delete to the end of word
+		^J: like Enter
+		^H: delete symbol like backspace
+		^W: delete word
+		^U: delete line
+		^\: more powerfull than ^C
+
+
+	#qlogs all logs here (/etc/rsyslog.conf)
+	#log rotation here /etc/logrotate.d/*
+		https://www.digitalocean.com/community/tutorials/how-to-manage-logfiles-with-logrotate-on-ubuntu-16-04
+
+	#qtime 	     ---> date
+	#change time ---> date MMDDhhmmCCYY.ss 
+	(MM - month, hh - hours, mm - minutes, CCYY - year, ss - second)
