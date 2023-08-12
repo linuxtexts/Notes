@@ -316,3 +316,40 @@ ___qDDOS________________________________________________________________________
       		return 444;                                                                                                                                              
       	}
 
+___qTEST SERVER__________________________________________________________________________________________________________
+
+	#TEST(iftop) loading HDD realtime ("yum install sysstat") (https://pingvinoff.net/2009/01/06/komanda-iostat/)
+                iostat -xmd 1
+                iostat 5 3
+		#on mac os use ---> iostat -w1 disk0
+
+		# rrqm/s 	обобщенное количество запросов на чтение в секунду;
+		# wrqm/s 	обобщенное количество запросов на запись в секунду;
+		# r/s 	количество запросов на чтение в секунду;
+		# w/s 	количество запросов на запись в секунду;
+		# rMB/s 	количество МБ при чтении с диска в секунду;
+		# wMB/s 	количество МБ при записи на диск в секунду;
+		# avgrq-sz 	средний размер (в секторах) запросов к диску;
+		# avgqu-sz 	средний размер очереди запросов к диску;
+		# await 	среднее время (милисекунды) на обработку запросов к диску (включает в себя время, потраченное в очереди на обработку и время на обработку запроса);
+		# r_await 	среднее время (милисекунды) на обработку запросов чтения к диску (включает в себя время, потраченное в очереди на обработку и время на обработку запроса);
+		# w_await 	среднее время (милисекунды) на обработку запросов запи ик диску (включает в себя время, потраченное в очереди на обработку и время на обработку запроса);
+		# svctm 	среднее время (милисекунды) I/O запросов (не образайте внимания на неё — будет удалена в ближайшем будущем);
+		# %util 	% CPU, затраченный на передачу I/O запросов к диску («пропускная способность» диска);
+
+		# %util if it 90-100% hdd speed not enough
+
+	#REAL TIME Bandwich Usages (http://palexa.pp.ua/blog/linux/setevye-resheniya/utilita-iftop-kontrol-trafika-v-rezhime-realnogo-vremeni-online.html)
+                iftop -i [eth interface]
+                iftop -i eth0 -f "dst port domain" (DNS traffic)
+                iftop -i eth0 -f "icmp" (ICMP traff)
+                iftop -i eth0 -f "dst port http" (HTTP traff)
+                iftop -i eth0 -f "dst port 22" (Traff going to 22 port
+                iftop -i eth0 -f "dst 8.8.8.8" (Traff going to ip 8.8.8.8)
+
+	#Test RAID 	---> cat /proc/mdstat
+	#Test speed bandwidth traff speed ---> speedtest-cli-master
+	#Test free space ---> df -h
+	#Show CPU temperature ---> sensors
+	#Temperature HDD     ---> hddtemp /dev/sda
+
