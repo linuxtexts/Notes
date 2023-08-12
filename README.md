@@ -894,3 +894,60 @@ ___qterminal (qbash) _________________OTHER COMMANDS____________________________
 	#qtime 	     ---> date
 	#change time ---> date MMDDhhmmCCYY.ss 
 	(MM - month, hh - hours, mm - minutes, CCYY - year, ss - second)
+
+___qsort_________________________________________________
+
+	sort -k2 -n -t '['
+
+	-k sort by column number
+	-n sort by numbers (from 1 to 9)
+	-t custom separator
+
+___qcut__________________________________________________
+
+	cut -d ">" -f4
+	-d delete separator
+	-f the number of columb that shows after
+
+___quniq_________________________________________________
+
+	uniq -c 
+	-c count uniq element
+
+___qawk__________________________________________________
+
+	#about qawk - https://www.shellhacks.com/awk-print-column-change-field-separator-linux-bash/
+		$1 - take first field
+		$(NF) - take the last field
+		$(NF-1) - take the last -1 field
+
+	#print column 1 and 2 with " - " separator, and prints column also seperated with space
+		awk -F ' ' '{print $1" - "$2}'
+
+	#take only the last field
+		awk -F ' ' '{print $NF}' 
+
+	#take the last - 1 field
+		awk -F ' ' '{print $(NF-1)}' 
+
+___qln________qsymlink___________________________________
+
+	#Make symlinked ---> (sudo ln -s /symlink  /folder)
+	#Show the path for ln symbollind ---> readlink -f symlinkName
+
+___qLocale____________________________________________________________________                         
+
+	https://www.shellhacks.com/linux-define-locale-language-settings/
+
+	#list of all locales
+		localedef --list-archive
+
+	#Installed locales
+		locale -a | grep hi_IN.utf8
+
+	#set language for current session
+		LANG=en_US.utf8 or LANG=ru_RU.utf8
+
+	#In Centos add/create to /etc/environment
+		LANG=en_US.UTF-8
+		LC_ALL=en_US.UTF-8
