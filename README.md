@@ -236,4 +236,83 @@ ___qDDOS________________________________________________________________________
       		return 444;                                                                                                                                              
       	}
 
-  
+  ___qDDOS______________________________________________________________________________________________________________
+
+	http://mycrimea.su/partners/web/access/ 
+
+	#Number of connection to 80 port ---> netstat -na | grep :80 | wc -l
+	#The same in the SYN status 	 ---> netstat -na | grep :80 | grep syn
+	#Show online 			 ---> netstat -na | grep :80 | grep EST | wc -l
+
+	#Popular User-Agents
+		cat /var/www/admin/data/logs/sitename.net.access.log | awk -F\" '{print $6}' | sort | uniq -c | sort -n
+		netstat -ntu | awk ' $5 ~ /^[0-9]/ {print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+		netstat -nt | awk -F":" '{print $2}' | sort | uniq -c | sort -n (show with port)
+
+		alalis last 500 string of log file -->tail -n 500 /var/www/admin/data/logs/sitename.net.access.log | cut -d' ' -f1 | sort | uniq -c | sort -gr
+
+		tail -n 2000000 /var/www/admin/data/logs/sitename.net.access.log | cut -d' ' -f1 | sort | uniq -c | sort -n
+					
+		___qlogtop_____________________________________________________________________________________________
+
+		#What does logtop shows?
+		#line1 - Just number
+		#line2 - amount of query from ip
+		#line3 - amount of query from ip in one second
+		#line4 - ip adress
+					
+		tail -f /var/www/admin/data/logs/sitename.net.access.log | awk {'print $1; fflush();'} | logtop
+
+		tail -f /var/www/admin/data/logs/sitename.net.access.log | cut -d ' ' -f 1 | logtop
+
+		tail -f /var/www/admin/data/logs/sitename.net.access.log | awk {'print $7; fflush();'} | logtop
+
+		--------------------------------------------------------------------------------------------------------
+
+		awk '{print $4}' /var/www/httpd-logs/text.access.log | cut -d: -f1 | uniq -c
+
+		#Show refferer to site (use acess log file)
+			grep "200 " /home/admin/httpd-logs/site.com.access.log | cut -d '"' -f 4 | sort | uniq -c | sort -rn | grep -v "site.com" | less
+
+	
+	#Pratektion from flud by nginx
+
+	#In http section
+	
+	map $http_user_agent $bad_useragent {                                                                                                                    
+        default 0;                                                                                                                                               
+        ~*ia_archiver 1;                                                                                                                                         
+        ~*Curl 1;                                                                                                                                                
+        ~*libwww 1;                                                                                                                                              
+        ~*BLEXBot 1;                                                                                                                                             
+        ~*SBooksNet 1;                                                                                                                                           
+        ~*MJ12bot 1;                                                                                                                                             
+        ~*Java 1;                                                                                                                                                
+        ~*NTENTbot 1;                                                                                                                                            
+        ~*GetIntent 1;                                                                                                                                           
+        ~*SemrushBot 1;                                                                                                                                          
+        ~*HybridBot 1;                                                                                                                                           
+        ~*AhrefsBot 1;                                                                                                                                           
+        ~*SeznamBot 1;                                                                                                                                           
+        ~*DeuSu 1;                                                                                                                                               
+        ~*GrapeshotCrawler 1;                                                                                                                                    
+        ~*SentiBot 1;                                                                                                                                            
+        ~*default 1;                                                                                                                                             
+        ~*Virusdie 1;                                                                                                                                            
+        ~*WordPress 1;                                                                                                                                           
+        ~*WhatsApp 1;                                                                                                                                            
+        ~*SeopultContentAnalyzer 1;                                                                                                                              
+        ~*WinHTTP 1;                                                                                                                                             
+        ~*MauiBot 1;                                                                                                                                             
+        ~*weborama 1;                                                                                                                                            
+        ~*Python 1;                                                                                                                                              
+        ~*Go-http-client 1;                                                                                                                                      
+        ~*VelenPublicWebCrawler 1;                                                                                                                               
+        }
+      	                                                                                                                                                         
+      	#in server section                                                                                                                                       
+      	                                                                                                                                                         
+      	if ($bad_useragent) {                                                                                                                                    
+      		return 444;                                                                                                                                              
+      	}
+
