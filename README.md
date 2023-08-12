@@ -353,3 +353,83 @@ ___qTEST SERVER_________________________________________________________________
 	#Show CPU temperature ---> sensors
 	#Temperature HDD     ---> hddtemp /dev/sda
 
+
+___qhistory_________________________________________________________________________________________________________________
+
+	#Show history ---> history
+	#Search in history ---> history | grep word
+	#Reply command number 3 ---> !number (!3)
+
+
+___qps_________________________________________________________
+
+	#Show all process with comfortable view
+		ps -ejH
+	#Show all process
+		ps -elf
+
+___qnetstat____SS analog netstat_______________________________
+
+	#Show all connection
+		netstat -tunup
+
+___qss_________________________________________________________
+
+	#Show all connection
+		ss -tunup
+	
+___qcp ________________________________________________________
+
+	#Copy folder 		    ---> cp -a /source/. /dest/
+	#Copy files (limited spee)d ---> rsync -avu --bwlimit=20000 --progress /source/files/ /destination/files/ (speed limit 20000kb)
+		#--chmod=Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r
+		#Du = Directory Owner (Read, write, execute)
+		#Dg = Directory Group (Read, execute)
+		#Do = Directory Users (all) (Read, execute)
+		#Fu = File Owner (Read, write)
+		#Fg = File Group (Read)
+		#Fo = File Users (all) (Read)
+
+	#Copy file by using scp
+		scp -P 443 ~/Downloads/Homer-Conferencing.sh root@8.9.9.9:/root
+	#Copy file by using scp via proxy
+		scp -P2277 "/usr/bin/ssh -o ProxyCommand=nc -X 5 -x 127.0.0.1:9050 %h %p" ~/Downloads/file.txt admin@192.168.0.1:/home/admin/www/1main/qwe/1s/source/
+___qtouch_______________________________________________________
+
+	#Change "Data Creation" and "Last Modified of file"
+		touch -a -m  -t 201001011212 temp.txt
+		# -a = accessed
+		# -m = modified
+		# -t  = timestamp - use [[CC]YY]MMDDhhmm[.ss] time format
+
+
+___qrsync_______________________________________________________
+
+	#https://www.linuxtechi.com/rsync-command-examples-linux/
+	#Transfer file from remout server to local server
+		rsync -v -e ssh remoteuser@X.X.X.X:/home/remoteuser/transfer/testfile.txt /home/localuser/
+		rsync -avu --bwlimit=5000 --chmod=Fu=rwx,Fg=r,Fo=r --progress /from_folder/ ~/destination_folder/
+	#rsync for resume download use "--partial"
+		rsync -azvvP /home/path/folder1/ /home/path/folder2
+
+	#rsync for cloud storage
+		rsync -azvvpu --delete -e "ssh -p443" ~/.A8fhd4ksDk root@ip-address:/home/
+		#--ignore-existing - copy only new file
+
+	#rsync exclude directorie
+		rsync -avzP --bwlimit=5000 --exclude {'file1.txt','dir1/*','dir2'} /source-directory /destination-directory
+		#example
+			rsync -avzP --exclude {'/.save/', '/save/'} ~/ /Volumes/hdd/john/
+		#rsync without recurcive ---> -d
+
+		#example exclude ONE directorie
+			rsync -avzP --exclude '/save/' ~/ /Volumes/hdd/john/
+
+	#rsync transfer file to server via socks5 proxy
+		rsync --progress -avrz -e 'ssh -p2244 -o ProxyCommand="nc -X 5 -x 127.0.0.1:5060 %h %p"' /Users/john/Downloads/test.mp4  admin@remoute-server:/name-folder/filename
+
+	___qhosts__/etc/hosts_______________________________________________
+	127.0.0.1 analytics.google.com
+	127.0.0.1 www.google-analytics.com
+	127.0.0.1 google-analytics.com
+	127.0.0.1 ssl.google-analytics.com
