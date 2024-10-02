@@ -1,6 +1,6 @@
 
 
-#Check certbot certificates script_______________________________________________________________________________________
+#Check certbot certificates script__one time per Day________________________________________________________________________
 	
 	# Log file
 	LOG_FILE="/var/log/certbot_check.log"
@@ -54,8 +54,8 @@
 	
 	echo "----- End of check -----" >> "$LOG_FILE"
 
-
-
+	crontab -e
+	0 0 * * * /path/to/cert_check.sh
 
 ______________________________________________________________________________________________________________________
 #!/bin/bash
