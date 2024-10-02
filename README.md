@@ -5,22 +5,22 @@
 ______________________________________________________________________________________________________________________
 #!/bin/bash
 
-# Проверка статуса Nginx
-if ! systemctl is-active --quiet nginx; then
-    echo "Nginx не работает. Перезагрузка..."
-    systemctl restart nginx
-    if systemctl is-active --quiet nginx; then
-        echo "Nginx успешно перезагружен."
-    else
-        echo "Не удалось перезагрузить Nginx."
-    fi
-else
-    echo "Nginx работает нормально."
-fi
-
-
-crontab -e
-0 * * * * /path/to/your/script.sh
+	# Проверка статуса Nginx
+	if ! systemctl is-active --quiet nginx; then
+	    echo "Nginx не работает. Перезагрузка..."
+	    systemctl restart nginx
+	    if systemctl is-active --quiet nginx; then
+	        echo "Nginx успешно перезагружен."
+	    else
+	        echo "Не удалось перезагрузить Nginx."
+	    fi
+	else
+	    echo "Nginx работает нормально."
+	fi
+	
+	
+	crontab -e
+	0 * * * * /path/to/your/script.sh
 
 ___qsc___________________________Spreadsheet Calculator_____________________________________________________________
 
@@ -1094,3 +1094,4 @@ ___qDD__________________________________________________________________________
 				or ---> dd if=/dev/zero of=/dev/Pd3 bs=1M count=999999999999
 
 	#Delete folder forever ---> for filename in /pathtofolder/*; do dd if=/dev/zero of="$filename" bs=1k count=200024; done
+
