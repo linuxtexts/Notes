@@ -1,3 +1,57 @@
+---------------------Certbot autoupdate certificates-------------------------------------------------------
+
+	#!/bin/bash
+	
+	# Path to the log file
+	LOG_FILE="/var/log/certbot_renewal.log"
+	
+	# Current date for logging
+	current_date=$(date '+%Y-%m-%d %H:%M:%S')
+	
+	# Log the start of the script
+	echo "[$current_date] Starting certificate check" >> $LOG_FILE
+	
+	# Flag indicating if renewal is needed
+	renew_needed=false
+	
+	# Get a list of all certificates and their expiration dates
+	cert_info=$(certbot certificates)
+	
+	# Check each certificate's expiration date
+	while read -r line; do
+	    if [[ $line == "Certificate Name:"* ]]; then
+	        # Save the domain name
+	        domain=$(echo $line | awk '{print $3}')
+	    elif [[ $line == "Expiry Date:"* ]]; then
+	        # Get the expiration date and days left until expiration
+	        expiry_date=$(echo $line | awk '{print $3 " " $4 " " $5}')
+	        days_left=$(echo $line | grep -oP '(?<=\().*(?= days)')
+	
+	        # Check if the certificate expires in less than 30 days
+	        if [[ $days_left -lt 30 ]]; then
+	            echo "[$current_date] Certificate for domain $domain expires in $days_left days. Attempting renewal..." >> $LOG_FILE
+	            renew_needed=true
+	        fi
+	    fi
+	done <<< "$cert_info"
+	
+	# If at least one certificate expires in less than 30 days, run renewal
+	if [ "$renew_needed" = true ]; then
+	    certbot renew >> $LOG_FILE 2>&1
+	    renew_status=$?
+	
+	    if [ $renew_status -eq 0 ]; then
+	        echo "[$current_date] Certificates successfully renewed." >> $LOG_FILE
+	    else
+	        echo "[$current_date] Error renewing certificates." >> $LOG_FILE
+	    fi
+	else
+	    echo "[$current_date] All certificates are valid for more than 30 days." >> $LOG_FILE
+	fi
+	
+	# Log the end of the script
+	echo "[$current_date] Certificate check completed" >> $LOG_FILE
+
 
 
 #Check certbot certificates script__one time per Day________________________________________________________________________
