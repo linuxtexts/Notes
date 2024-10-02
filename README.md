@@ -53,6 +53,10 @@
 	echo "[$current_date] Certificate check completed" >> $LOG_FILE
 
 
+ 	crontab -e
+  	0 0 * * * /path/to/check_and_renew_certs.sh
+
+
 
 #Check certbot certificates script__one time per Day________________________________________________________________________
 	
