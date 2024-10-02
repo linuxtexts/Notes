@@ -1,5 +1,60 @@
 
 
+#Check certbot certificates script______________________________________________________________________________________________________________________
+	
+	# Log file
+	LOG_FILE="/var/log/certbot_check.log"
+	
+	# Current date
+	DATE=$(date +"%Y-%m-%d %H:%M:%S")
+	
+	# Get the list of certificates and their expiration dates
+	CERTS=$(certbot certificates 2>/dev/null)
+	
+	# Set the threshold to 30 days
+	LIMIT=30
+	
+	# Flag for updating certificates
+	UPDATE_NEEDED=false
+	
+	# Process each certificate
+	echo "----- Checking certificates: $DATE -----" >> "$LOG_FILE"
+	
+	while read -r line; do
+	    # Find lines containing "Expiry Date"
+	    if [[ $line == *"Expiry Date:"* ]]; then
+	        DOMAIN=$(echo "$line" | sed -n 's/.*Domains: \(.*\)/\1/p')
+	        EXPIRY_DATE=$(echo "$line" | sed -n 's/.*Expiry Date: \(.*\)/\1/p')
+	
+	        # Convert the certificate's expiration date to UNIX timestamp
+	        EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE" +%s)
+	        CURRENT_TIMESTAMP=$(date +%s)
+	
+	        # Calculate the number of days left until the certificate expires
+	        DAYS_LEFT=$(( (EXPIRY_TIMESTAMP - CURRENT_TIMESTAMP) / 86400 ))
+	
+	        # Log certificate information
+	        echo "Certificate for domain: $DOMAIN, Days left: $DAYS_LEFT" >> "$LOG_FILE"
+	
+	        # Check if the certificate expires in less than 30 days
+	        if [[ $DAYS_LEFT -le $LIMIT ]]; then
+	            echo "Certificate for domain $DOMAIN needs renewal (days left: $DAYS_LEFT)." >> "$LOG_FILE"
+	            UPDATE_NEEDED=true
+	        fi
+	    fi
+	done <<< "$CERTS"
+	
+	# Check if certificates need to be updated
+	if [[ $UPDATE_NEEDED = true ]]; then
+	    echo "Certificate renewal is required." >> "$LOG_FILE"
+	    /path/to/update_certificates.sh
+	else
+	    echo "All certificates are valid." >> "$LOG_FILE"
+	fi
+	
+	echo "----- End of check -----" >> "$LOG_FILE"
+
+
 
 
 ______________________________________________________________________________________________________________________
