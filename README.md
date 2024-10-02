@@ -1,3 +1,27 @@
+
+
+
+
+______________________________________________________________________________________________________________________
+#!/bin/bash
+
+# Проверка статуса Nginx
+if ! systemctl is-active --quiet nginx; then
+    echo "Nginx не работает. Перезагрузка..."
+    systemctl restart nginx
+    if systemctl is-active --quiet nginx; then
+        echo "Nginx успешно перезагружен."
+    else
+        echo "Не удалось перезагрузить Nginx."
+    fi
+else
+    echo "Nginx работает нормально."
+fi
+
+
+crontab -e
+0 * * * * /path/to/your/script.sh
+
 ___qsc___________________________Spreadsheet Calculator_____________________________________________________________
 
         https://github.com/n-t-roff/sc
