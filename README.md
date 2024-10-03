@@ -228,6 +228,10 @@ ___Terminal_____________________________________________________________________
 
 ___qcron_____________________________________________________________________________________________________
 
+	#make files
+        touch /root/check_nginx.sh && touch /root/check_and_renew_certs.sh && touch /var/log/check_nginx_script.log && touch /var/log/check_and_renew_certs.log
+        chmod 777 /root/check_nginx.sh && chmod 777 /root/check_and_renew_certs.sh
+	
  	0 * * * * /root/check_nginx.sh >> /var/log/check_nginx_script.log
         0 0 * * * /root/check_and_renew_certs.sh >> /var/log/check_and_renew_certs.log
  	________________________________________________________________
