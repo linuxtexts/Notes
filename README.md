@@ -226,15 +226,68 @@ ___Terminal_____________________________________________________________________
         e — edit a numeric value.
         E — edit a string value.
 
+___qcron_____________________________________________________________________________________________________
 
+ 	0 * * * * /root/check_nginx.sh >> /var/log/check_nginx_script.log
+        0 0 * * * /root/check_and_renew_certs.sh >> /var/log/check_and_renew_certs.log
+ 	________________________________________________________________
+        #corntab scripts ---> check_nginx.sh
+        ________________________________________________________________
+        #!/bin/bash
+        # Check Nginx
+        if ! systemctl is-active --quiet nginx; then
+            echo "Nginx down. Restarting nginx..."
+            systemctl restart nginx
+            if systemctl is-active --quiet nginx; then
+                echo "Nginx successfully restarted."
+            else
+                echo "Failed to reload Nginx."
+            fi
+        else
+            echo "Nginx is working fine."
+        fi
+
+
+        ________________________________________________________________
+        #crontab scripts ---> check_and_renew_certs.sh
+        ________________________________________________________________
+        #!/bin/bash
+        # Function to check the number of days until the certificate expires
+        check_certificate() {
+            domain=$1
+            expiry_date=$(sudo certbot certificates --domain "$domain" 2>/dev/null | grep "Expiry Date:" | awk '{print $3, $4, $5}')
+            expiry_epoch=$(date -d "$expiry_date" +%s)
+            current_epoch=$(date +%s)
+            days_left=$(( (expiry_epoch - current_epoch) / 86400 ))
+
+            echo "Domen: $domain, days until expiration: $days_left"
+
+            if [ "$days_left" -lt 30 ]; then
+                echo "Certificat for domain $domain expires in more than 30 days. Starting the update..."
+                sudo certbot renew --cert-name "$domain"
+            else
+                echo "The certificate for the domain $domain expires in more than 30 days."
+            fi
+        }
+
+        # We get a list of all domains for which there are certificates
+        domains=$(sudo certbot certificates | grep "Domains:" | awk '{print $2}')
+
+        # We check every domain
+        for domain in $domains; do
+            check_certificate "$domain"
+        done
 ___qIPTABLES_________________________________________________________________________________________________
 
 	https://notessysadmin.com/minimum-rules-for-iptables
 	https://toster.ru/q/14066
 	http://farmal.in/2011/07/borba-s-ddos-atakami-sredstvami-iptables-i-sysctl/
 
-	#redirect (forwarding) port form 80 to 8080 on local PC
-		iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 8080
+	#show all rules!!!
+                iptables -n -L -v --line-numbers
+
+        #redirect (forwarding) port form 80 to 8080 on local PC
+                iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 8080
 
 	#INSTALL IPTABLES at NEW SERVER
 		1. Install IPTABLES
@@ -517,7 +570,18 @@ ___qps_________________________________________________________
 ___qnetstat____SS analog netstat_______________________________
 
 	#Show all connection
-		netstat -tunup
+                netstat -tunup
+        #Show all IP adress connection at 443 port
+                netstat -tn 2>/dev/null | awk '$4 ~ /:443$/ && $6 == "ESTABLISHED" {print $5}' | cut -d':' -f1 | sort | uniq -c | sort -n
+                #you can limitet max connection from one IP address with IPTABLES (example 20)
+                        iptables -t filter -I INPUT -p tcp --syn --dport 443 -m connlimit --connlimit-above 20 --connlimit-mask 32 -j DROP
+
+        #Show all rules
+                iptables -n -L -v --line-numbers
+        #Show what process on wich port works
+                netstat -tulpan | grep -i 'listen'
+        #Show a wich porgram listen a port 25
+                lsof -i :25
 
 ___qss_________________________________________________________
 
