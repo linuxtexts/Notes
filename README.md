@@ -21,11 +21,12 @@
 	    echo "$decrypted_content"
 	}
 	
-	# Добавление пароля
+	# Добавление пароля с описанием
 	add_password() {
 	    read -p "Enter the name of the account: " account_name
 	    read -sp "Enter the password: " password
 	    echo ""  # Для перехода на новую строку
+	    read -p "Enter a description: " description
 	
 	    # Дешифруем содержимое и добавляем новый пароль
 	    local existing_content=$(decrypt_to_variable)
@@ -34,9 +35,9 @@
 	    fi
 	    
 	    # Формируем новое содержимое
-	    local new_content="$existing_content$account_name:$password"$'\n'
+	    local new_content="$existing_content$account_name:$password:$description"$'\n'
 	    encrypt_file "$new_content"  # Шифруем новое содержимое
-	    echo "Password added and file encrypted."
+	    echo "Password and description added and file encrypted."
 	}
 	
 	# Извлечение пароля
@@ -58,24 +59,56 @@
 	    unset password
 	}
 	
+	# Извлечение описания пароля
+	get_description() {
+	    local account_name="$1"
+	    local decrypted_content=$(decrypt_to_variable)
+	    
+	    local description=$(echo "$decrypted_content" | grep "^$account_name:" | cut -d':' -f3)
+	    
+	    if [ -n "$description" ]; then
+	        echo "Description for '$account_name': $description"
+	    else
+	        echo "Description for '$account_name' not found."
+	    fi
+	
+	    # Обнуляем переменные для безопасности
+	    unset decrypted_content
+	    unset description
+	}
+	
 	# Проверка существования зашифрованного файла
 	if [ ! -f "$PASSWORD_FILE" ]; then
 	    create_encrypted_file
 	fi
 	
 	# Основной блок
-	if [ "$1" == "add" ]; then
-	    add_password
-	elif [ "$1" == "get_pass" ]; then
-	    if [ -z "$2" ]; then
-	        echo "Usage: ./pass_manager.sh get_pass <account_name>"
-	        exit 1
-	    fi
-	    get_password "$2"
-	else
-	    echo "Usage: ./pass_manager.sh {add|get_pass}"
-	fi
+	case "$1" in
+	    add)
+	        add_password
+	        ;;
+	    get_pass)
+	        if [ -z "$2" ]; then
+	            echo "Usage: ./pass_manager.sh get_pass <account_name>"
+	            exit 1
+	        fi
+	        get_password "$2"
+	        ;;
+	    desc)
+	        if [ -z "$2" ]; then
+	            echo "Usage: ./pass_manager.sh desc <account_name>"
+	            exit 1
+	        fi
+	        get_description "$2"
+	        ;;
+	    *)
+	        echo "Usage: ./pass_manager.sh {add|get_pass|desc}"
+	        ;;
+	esac
 
+	./pass_manager.sh add
+ 	./pass_manager.sh get_pass googleaccount
+  	./pass_manager.sh desc googleaccount
 
 
 
