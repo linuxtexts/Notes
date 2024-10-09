@@ -1,19 +1,24 @@
 -------------------- Password encrypt script -------------------------------------------------------------
 
 	#!/bin/bash
-	
+
 	PASSWORD_FILE="passwords.enc"
-	PASSWORD_STORE="passwords.txt"
 	ENCRYPTION_KEY="your-encryption-key"  # Замените на свой ключ
+	
+	# Функция для шифрования и создания файла
+	create_encrypted_file() {
+	    echo -n "" > "$PASSWORD_FILE"
+	}
 	
 	# Функция для шифрования
 	encrypt_file() {
-	    openssl enc -aes-256-cbc -salt -in "$PASSWORD_STORE" -out "$PASSWORD_FILE" -k "$ENCRYPTION_KEY"
+	    openssl enc -aes-256-cbc -salt -in <(echo "$1") -out "$PASSWORD_FILE" -k "$ENCRYPTION_KEY"
 	}
 	
 	# Функция для дешифрования
-	decrypt_file() {
-	    openssl enc -d -aes-256-cbc -in "$PASSWORD_FILE" -out "$PASSWORD_STORE" -k "$ENCRYPTION_KEY"
+	decrypt_to_variable() {
+	    local decrypted_content=$(openssl enc -d -aes-256-cbc -in "$PASSWORD_FILE" -k "$ENCRYPTION_KEY")
+	    echo "$decrypted_content"
 	}
 	
 	# Добавление пароля
@@ -21,29 +26,36 @@
 	    read -p "Enter the name of the account: " account_name
 	    read -sp "Enter the password: " password
 	    echo ""  # Для перехода на новую строку
-	    echo "$account_name:$password" >> "$PASSWORD_STORE"
-	    encrypt_file
+	    local existing_content=$(decrypt_to_variable)
+	    echo "$existing_content" > temp.txt  # Временный файл для шифрования
+	    echo "$account_name:$password" >> temp.txt
+	    encrypt_file "$(cat temp.txt)"
+	    rm temp.txt  # Удаляем временный файл
 	    echo "Password added and file encrypted."
 	}
 	
 	# Извлечение пароля
 	get_password() {
 	    local account_name="$1"
-	    decrypt_file
-	    local password=$(grep "^$account_name:" "$PASSWORD_STORE" | cut -d':' -f2)
+	    local decrypted_content=$(decrypt_to_variable)
+	    
+	    local password=$(echo "$decrypted_content" | grep "^$account_name:" | cut -d':' -f2)
+	    
 	    if [ -n "$password" ]; then
 	        echo -n "$password" | pbcopy  # Копирование в буфер обмена для macOS
 	        echo "Password for '$account_name' copied to clipboard."
 	    else
 	        echo "Password for '$account_name' not found."
 	    fi
-	    encrypt_file
+	
+	    # Обнуляем переменные для безопасности
+	    unset decrypted_content
+	    unset password
 	}
 	
 	# Проверка существования зашифрованного файла
 	if [ ! -f "$PASSWORD_FILE" ]; then
-	    touch "$PASSWORD_STORE"
-	    encrypt_file
+	    create_encrypted_file
 	fi
 	
 	# Основной блок
@@ -58,6 +70,7 @@
 	else
 	    echo "Usage: ./pass_manager.sh {add|get_pass}"
 	fi
+
 
 
 
