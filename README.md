@@ -1,5 +1,6 @@
 ----------------------Script download und upload files to remout server using ssh--------------------------
-	#!/bin/bash
+	
+ 	#!/bin/bash
 	
 	# Function to upload a file to the server
 	upload_file() {
