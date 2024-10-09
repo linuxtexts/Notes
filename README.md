@@ -3,34 +3,34 @@
  	#!/bin/bash
 	
 	# Function to upload a file to the server
-	upload_file() {
-	    read -p "Enter the local file path to upload: " local_file
-	    read -p "Enter the remote destination path (e.g., /home/user/): " remote_path
-	    scp "$local_file" "$USER@$server_ip:$remote_path"
-	    echo "File uploaded successfully."
-	}
+		upload_file() {
+		    read -p "Enter the local file path to upload: " local_file
+		    read -p "Enter the remote destination path (e.g., /home/user/): " remote_path
+		    scp "$local_file" "$USER@$server_ip:$remote_path"
+		    echo "File uploaded successfully."
+		}
 	
 	# Function to download a file from the server
-	download_file() {
-	    read -p "Enter the remote file path to download: " remote_file
-	    read -p "Enter the local destination path (e.g., /home/user/): " local_path
-	    scp "$USER@$server_ip:$remote_file" "$local_path"
-	    echo "File downloaded successfully."
-	}
+		download_file() {
+		    read -p "Enter the remote file path to download: " remote_file
+		    read -p "Enter the local destination path (e.g., /home/user/): " local_path
+		    scp "$USER@$server_ip:$remote_file" "$local_path"
+		    echo "File downloaded successfully."
+		}
 	
 	# Main script execution
- 
-	read -p "Enter the server IP address: " server_ip
-	read -p "Do you want to upload or download a file? (u/d): " action
+		read -p "Enter the server IP address: " server_ip
+		read -p "Do you want to upload or download a file? (u/d): " action
 	
 	# Check user action
-	if [[ "$action" == "u" ]]; then
-	    upload_file
-	elif [[ "$action" == "d" ]]; then
-	    download_file
-	else
-	    echo "Invalid option. Please choose 'u' to upload or 'd' to download."
-	fi
+ 
+		if [[ "$action" == "u" ]]; then
+		    upload_file
+		elif [[ "$action" == "d" ]]; then
+		    download_file
+		else
+		    echo "Invalid option. Please choose 'u' to upload or 'd' to download."
+		fi
 
 - version 2 -----------------------------------------------------------------------------------------------
 
