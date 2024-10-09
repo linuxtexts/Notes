@@ -31,17 +31,15 @@
 	fi
 
 - version 2 -----------------------------------------------------------------------------------------------
-
-
-#!/bin/bash
-	# Function to display the menu
+	#!/bin/bash
+        #Function to display the menu
 	show_menu() {
 	    echo "1) Upload a file"
 	    echo "2) Download a file"
 	    echo "3) Exit"
 	}
 	
-	# Function for file upload
+	#Function for file upload
 	upload_file() {
 	    read -p "Enter the path of the file to upload: " local_file
 	    read -p "Enter the destination path on the server: " remote_path
@@ -60,7 +58,7 @@
 	    fi
 	}
 	
-	# Function for file download
+	#Function for file download
 	download_file() {
 	    read -p "Enter the path of the file to download from the server: " remote_file
 	    read -p "Enter the local path to save the file: " local_path
@@ -79,11 +77,11 @@
 	    fi
 	}
 	
-	# Read server IP and user information
+	#Read server IP and user information
 	read -p "Enter the server IP address: " ip
 	read -p "Enter your username: " user
 	
-	# Main loop
+	#Main loop
 	while true; do
 	    show_menu
 	    read -p "Choose an option: " option
