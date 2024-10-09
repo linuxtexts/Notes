@@ -36,7 +36,7 @@
 
 	#!/bin/bash
 
-        #Function to display the menu
+	#Function to display the menu
 	show_menu() {
 	    echo "1) Upload a file"
 	    echo "2) Download a file"
@@ -53,10 +53,10 @@
 	    # Handle authentication method
 	    if [[ "$auth_method" == "p" ]]; then
 	        read -sp "Enter your password: " password
-	        sshpass -p "$password" scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" "$local_file" "$user@$ip:$remote_path"
+	        rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -o StrictHostKeyChecking=no" "$local_file" "$user@$ip:$remote_path"
 	    elif [[ "$auth_method" == "c" ]]; then
 	        read -p "Enter the path to your private key: " private_key
-	        scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" -i "$private_key" "$local_file" "$user@$ip:$remote_path"
+	        rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -i $private_key -o StrictHostKeyChecking=no" "$local_file" "$user@$ip:$remote_path"
 	    else
 	        echo "Invalid authentication method."
 	    fi
@@ -72,10 +72,10 @@
 	    # Handle authentication method
 	    if [[ "$auth_method" == "p" ]]; then
 	        read -sp "Enter your password: " password
-	        sshpass -p "$password" scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" "$user@$ip:$remote_file" "$local_path"
+	        rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -o StrictHostKeyChecking=no" "$user@$ip:$remote_file" "$local_path"
 	    elif [[ "$auth_method" == "c" ]]; then
 	        read -p "Enter the path to your private key: " private_key
-	        scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" -i "$private_key" "$user@$ip:$remote_file" "$local_path"
+	        rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -i $private_key -o StrictHostKeyChecking=no" "$user@$ip:$remote_file" "$local_path"
 	    else
 	        echo "Invalid authentication method."
 	    fi
@@ -97,6 +97,7 @@
 	        *) echo "Invalid option. Please try again." ;;
 	    esac
 	done
+
 
 
 
