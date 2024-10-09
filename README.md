@@ -32,8 +32,8 @@
 
 - version 2 -----------------------------------------------------------------------------------------------
 
-	#!/bin/bash
 
+#!/bin/bash
 	# Function to display the menu
 	show_menu() {
 	    echo "1) Upload a file"
