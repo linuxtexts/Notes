@@ -77,6 +77,24 @@
 	    unset description
 	}
 	
+	# Функция для вывода всех учетных записей и описаний (без паролей)
+	show_all_except_passwords() {
+	    local decrypted_content=$(decrypt_to_variable)
+	    
+	    if [ -z "$decrypted_content" ]; then
+	        echo "No entries found."
+	        return
+	    fi
+	
+	    # Выводим только имя учетной записи и описание
+	    echo "$decrypted_content" | while IFS=: read -r account_name _ description; do
+	        echo "Account: $account_name, Description: $description"
+	    done
+	
+	    # Обнуляем переменные для безопасности
+	    unset decrypted_content
+	}
+	
 	# Проверка существования зашифрованного файла
 	if [ ! -f "$PASSWORD_FILE" ]; then
 	    create_encrypted_file
@@ -101,10 +119,14 @@
 	        fi
 	        get_description "$2"
 	        ;;
+	    show_all)
+	        show_all_except_passwords
+	        ;;
 	    *)
-	        echo "Usage: ./pass_manager.sh {add|get_pass|desc}"
+	        echo "Usage: ./pass_manager.sh {add|get_pass|desc|show_all}"
 	        ;;
 	esac
+
 
 	./pass_manager.sh add
  	./pass_manager.sh get_pass googleaccount
