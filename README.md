@@ -1,3 +1,112 @@
+----------------------Script download und upload files to remout server using ssh--------------------------
+	#!/bin/bash
+	
+	# Function to upload a file to the server
+	upload_file() {
+	    read -p "Enter the local file path to upload: " local_file
+	    read -p "Enter the remote destination path (e.g., /home/user/): " remote_path
+	    scp "$local_file" "$USER@$server_ip:$remote_path"
+	    echo "File uploaded successfully."
+	}
+	
+	# Function to download a file from the server
+	download_file() {
+	    read -p "Enter the remote file path to download: " remote_file
+	    read -p "Enter the local destination path (e.g., /home/user/): " local_path
+	    scp "$USER@$server_ip:$remote_file" "$local_path"
+	    echo "File downloaded successfully."
+	}
+	
+	# Main script execution
+	read -p "Enter the server IP address: " server_ip
+	read -p "Do you want to upload or download a file? (u/d): " action
+	
+	# Check user action
+	if [[ "$action" == "u" ]]; then
+	    upload_file
+	elif [[ "$action" == "d" ]]; then
+	    download_file
+	else
+	    echo "Invalid option. Please choose 'u' to upload or 'd' to download."
+	fi
+
+- version 2 -----------------------------------------------------------------------------------------------
+
+	#!/bin/bash
+	
+	# Function to display the menu
+	show_menu() {
+	    echo "1) Upload a file"
+	    echo "2) Download a file"
+	    echo "3) Exit"
+	}
+	
+	# Function for file upload
+	upload_file() {
+	    read -p "Enter the path of the file to upload: " local_file
+	    read -p "Enter the destination path on the server: " remote_path
+	    read -p "Use password or certificate for authentication? (p/c): " auth_method
+	
+	    # Handle authentication method
+	    if [[ "$auth_method" == "p" ]]; then
+	        read -sp "Enter your password: " password
+	        sshpass -p "$password" scp "$local_file" "$user@$ip:$remote_path"
+	    elif [[ "$auth_method" == "c" ]]; then
+	        read -p "Enter the path to your private key: " private_key
+	        scp -i "$private_key" "$local_file" "$user@$ip:$remote_path"
+	    else
+	        echo "Invalid authentication method."
+	    fi
+	}
+	
+	# Function for file download
+	download_file() {
+	    read -p "Enter the path of the file to download from the server: " remote_file
+	    read -p "Enter the local path to save the file: " local_path
+	    read -p "Use password or certificate for authentication? (p/c): " auth_method
+	
+	    # Handle authentication method
+	    if [[ "$auth_method" == "p" ]]; then
+	        read -sp "Enter your password: " password
+	        sshpass -p "$password" scp "$user@$ip:$remote_file" "$local_path"
+	    elif [[ "$auth_method" == "c" ]]; then
+	        read -p "Enter the path to your private key: " private_key
+	        scp -i "$private_key" "$user@$ip:$remote_file" "$local_path"
+	    else
+	        echo "Invalid authentication method."
+	    fi
+	}
+	
+	# Read server IP and user information
+	read -p "Enter the server IP address: " ip
+	read -p "Enter your username: " user
+	
+	# Read proxy settings
+	read -p "Use SOCKS5 proxy? (y/n): " use_proxy
+	if [[ "$use_proxy" == "y" ]]; then
+	    read -p "Enter the proxy address (host:port): " proxy
+	    export ALL_PROXY="socks5://$proxy"
+	fi
+	
+	# Main loop
+	while true; do
+	    show_menu
+	    read -p "Choose an option: " option
+	
+	    case $option in
+	        1) upload_file ;;
+	        2) download_file ;;
+	        3) echo "Exiting..."; exit 0 ;;
+	        *) echo "Invalid option. Please try again." ;;
+	    esac
+	done
+
+
+
+
+
+
+
 ----------------------alias--------------------------------------------------------------------------------
 
 	netstat -tn 2>/dev/null | awk '$4 ~ /:443$/ && $6 == "ESTABLISHED" {print $5}' | cut -d':' -f1 | sort | uniq -c | sort -nr
@@ -5,6 +114,8 @@
 	как на сервере посмотреть какой процесс на каком порту работает.
 	напиши скрипт на bash который определяет количество подключений в текущий момент со всех ip адрессов на порт 443.
  	напиши скрипт на bash который определяет количество подключений в текущий момент со всех ip адрессов на порт 443 используя netstat.  Затем посчитай общее колличество подключений и выведи на экран.
+
+	  Представь что ты системный администратор Linux. Напиши bash скрипт который может через ssh upload and downloaad files to server. В скрипте тебе надо дать пользователю указать   ip адресс сервера, дать выбрать какие файлы пользователь хочет download or upload и куда именно их надо загрузить или скачать. Также необходимо дать пользователю выбор использовать пароль или сертификат для авторизации. Также необходимо указать прокси сокс 5 ели пользователь использует прокси. Коментарии в самом скрипте пиши на английском языку
 
 
 
