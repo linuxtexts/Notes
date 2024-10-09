@@ -19,6 +19,7 @@
 	}
 	
 	# Main script execution
+ 
 	read -p "Enter the server IP address: " server_ip
 	read -p "Do you want to upload or download a file? (u/d): " action
 	
@@ -32,7 +33,9 @@
 	fi
 
 - version 2 -----------------------------------------------------------------------------------------------
+
 	#!/bin/bash
+
         #Function to display the menu
 	show_menu() {
 	    echo "1) Upload a file"
