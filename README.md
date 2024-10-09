@@ -5,19 +5,19 @@
 	PASSWORD_FILE="passwords.enc"
 	ENCRYPTION_KEY="your-encryption-key"  # Замените на свой ключ
 	
-	# Функция для шифрования и создания файла
+	# Функция для создания файла, если он не существует
 	create_encrypted_file() {
 	    echo -n "" > "$PASSWORD_FILE"
 	}
 	
 	# Функция для шифрования
 	encrypt_file() {
-	    openssl enc -aes-256-cbc -salt -in <(echo "$1") -out "$PASSWORD_FILE" -k "$ENCRYPTION_KEY"
+	    echo "$1" | openssl enc -aes-256-cbc -salt -out "$PASSWORD_FILE" -k "$ENCRYPTION_KEY"
 	}
 	
 	# Функция для дешифрования
 	decrypt_to_variable() {
-	    local decrypted_content=$(openssl enc -d -aes-256-cbc -in "$PASSWORD_FILE" -k "$ENCRYPTION_KEY")
+	    local decrypted_content=$(openssl enc -d -aes-256-cbc -in "$PASSWORD_FILE" -k "$ENCRYPTION_KEY" 2>/dev/null)
 	    echo "$decrypted_content"
 	}
 	
@@ -26,11 +26,16 @@
 	    read -p "Enter the name of the account: " account_name
 	    read -sp "Enter the password: " password
 	    echo ""  # Для перехода на новую строку
+	
+	    # Дешифруем содержимое и добавляем новый пароль
 	    local existing_content=$(decrypt_to_variable)
-	    echo "$existing_content" > temp.txt  # Временный файл для шифрования
-	    echo "$account_name:$password" >> temp.txt
-	    encrypt_file "$(cat temp.txt)"
-	    rm temp.txt  # Удаляем временный файл
+	    if [ $? -ne 0 ]; then
+	        existing_content=""  # Если расшифровка не удалась, начинаем с пустого
+	    fi
+	    
+	    # Формируем новое содержимое
+	    local new_content="$existing_content$account_name:$password"$'\n'
+	    encrypt_file "$new_content"  # Шифруем новое содержимое
 	    echo "Password added and file encrypted."
 	}
 	
@@ -70,6 +75,7 @@
 	else
 	    echo "Usage: ./pass_manager.sh {add|get_pass}"
 	fi
+
 
 
 
