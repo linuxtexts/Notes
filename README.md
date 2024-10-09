@@ -3,21 +3,22 @@
 	#!/bin/bash
 
 	PASSWORD_FILE="passwords.enc"
-	ENCRYPTION_KEY="your-encryption-key"  # Замените на свой ключ
+	PUBLIC_KEY="my_rsa_key.pub"  # Путь к вашему публичному ключу
+	PRIVATE_KEY="my_rsa_key"     # Путь к вашему приватному ключу
 	
 	# Функция для создания файла, если он не существует
 	create_encrypted_file() {
 	    echo -n "" > "$PASSWORD_FILE"
 	}
 	
-	# Функция для шифрования
+	# Функция для шифрования с использованием публичного ключа
 	encrypt_file() {
-	    echo "$1" | openssl enc -aes-256-cbc -salt -out "$PASSWORD_FILE" -k "$ENCRYPTION_KEY"
+	    echo "$1" | openssl rsautl -encrypt -inkey "$PUBLIC_KEY" -pubin -out "$PASSWORD_FILE"
 	}
 	
-	# Функция для дешифрования
+	# Функция для дешифрования с использованием приватного ключа
 	decrypt_to_variable() {
-	    local decrypted_content=$(openssl enc -d -aes-256-cbc -in "$PASSWORD_FILE" -k "$ENCRYPTION_KEY" 2>/dev/null)
+	    local decrypted_content=$(openssl rsautl -decrypt -inkey "$PRIVATE_KEY" -in "$PASSWORD_FILE" 2>/dev/null)
 	    echo "$decrypted_content"
 	}
 	
@@ -126,6 +127,7 @@
 	        echo "Usage: ./pass_manager.sh {add|get_pass|desc|show_all}"
 	        ;;
 	esac
+
 
 
 	./pass_manager.sh add
