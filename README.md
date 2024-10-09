@@ -33,7 +33,7 @@
 - version 2 -----------------------------------------------------------------------------------------------
 
 	#!/bin/bash
-	
+
 	# Function to display the menu
 	show_menu() {
 	    echo "1) Upload a file"
@@ -46,14 +46,15 @@
 	    read -p "Enter the path of the file to upload: " local_file
 	    read -p "Enter the destination path on the server: " remote_path
 	    read -p "Use password or certificate for authentication? (p/c): " auth_method
+	    read -p "Enter your SOCKS5 proxy (host:port): " proxy
 	
 	    # Handle authentication method
 	    if [[ "$auth_method" == "p" ]]; then
 	        read -sp "Enter your password: " password
-	        sshpass -p "$password" scp "$local_file" "$user@$ip:$remote_path"
+	        sshpass -p "$password" scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" "$local_file" "$user@$ip:$remote_path"
 	    elif [[ "$auth_method" == "c" ]]; then
 	        read -p "Enter the path to your private key: " private_key
-	        scp -i "$private_key" "$local_file" "$user@$ip:$remote_path"
+	        scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" -i "$private_key" "$local_file" "$user@$ip:$remote_path"
 	    else
 	        echo "Invalid authentication method."
 	    fi
@@ -64,14 +65,15 @@
 	    read -p "Enter the path of the file to download from the server: " remote_file
 	    read -p "Enter the local path to save the file: " local_path
 	    read -p "Use password or certificate for authentication? (p/c): " auth_method
+	    read -p "Enter your SOCKS5 proxy (host:port): " proxy
 	
 	    # Handle authentication method
 	    if [[ "$auth_method" == "p" ]]; then
 	        read -sp "Enter your password: " password
-	        sshpass -p "$password" scp "$user@$ip:$remote_file" "$local_path"
+	        sshpass -p "$password" scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" "$user@$ip:$remote_file" "$local_path"
 	    elif [[ "$auth_method" == "c" ]]; then
 	        read -p "Enter the path to your private key: " private_key
-	        scp -i "$private_key" "$user@$ip:$remote_file" "$local_path"
+	        scp -o "ProxyCommand=nc -X 5 -x $proxy %h %p" -i "$private_key" "$user@$ip:$remote_file" "$local_path"
 	    else
 	        echo "Invalid authentication method."
 	    fi
@@ -80,13 +82,6 @@
 	# Read server IP and user information
 	read -p "Enter the server IP address: " ip
 	read -p "Enter your username: " user
-	
-	# Read proxy settings
-	read -p "Use SOCKS5 proxy? (y/n): " use_proxy
-	if [[ "$use_proxy" == "y" ]]; then
-	    read -p "Enter the proxy address (host:port): " proxy
-	    export ALL_PROXY="socks5://$proxy"
-	fi
 	
 	# Main loop
 	while true; do
@@ -100,6 +95,7 @@
 	        *) echo "Invalid option. Please try again." ;;
 	    esac
 	done
+
 
 
 
