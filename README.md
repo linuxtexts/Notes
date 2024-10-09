@@ -1,36 +1,69 @@
 ----------------------Script download und upload files to remout server using ssh--------------------------
 	
  	#!/bin/bash
+
+	# Function to display the menu
+	show_menu() {
+	    echo "1) Upload a file"
+	    echo "2) Download a file"
+	    echo "3) Exit"
+	}
 	
-	# Function to upload a file to the server
-		upload_file() {
-		    read -p "Enter the local file path to upload: " local_file
-		    read -p "Enter the remote destination path (e.g., /home/user/): " remote_path
-		    scp "$local_file" "$USER@$server_ip:$remote_path"
-		    echo "File uploaded successfully."
-		}
+	# Function for file upload
+	upload_file() {
+	    read -p "Enter the path of the file to upload: " local_file
+	    read -p "Enter the destination path on the server: " remote_path
+	    read -p "Use password or certificate for authentication? (p/c): " auth_method
+	    read -p "Enter your SOCKS5 proxy (host:port): " proxy
 	
-	# Function to download a file from the server
-		download_file() {
-		    read -p "Enter the remote file path to download: " remote_file
-		    read -p "Enter the local destination path (e.g., /home/user/): " local_path
-		    scp "$USER@$server_ip:$remote_file" "$local_path"
-		    echo "File downloaded successfully."
-		}
+	    # Handle authentication method
+	    if [[ "$auth_method" == "p" ]]; then
+	        read -sp "Enter your password: " password
+	        sshpass -p "$password" rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -o StrictHostKeyChecking=no" "$local_file" "$user@$ip:$remote_path"
+	    elif [[ "$auth_method" == "c" ]]; then
+	        read -p "Enter the path to your private key: " private_key
+	        rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -i $private_key -o StrictHostKeyChecking=no" "$local_file" "$user@$ip:$remote_path"
+	    else
+	        echo "Invalid authentication method."
+	    fi
+	}
 	
-	# Main script execution
-		read -p "Enter the server IP address: " server_ip
-		read -p "Do you want to upload or download a file? (u/d): " action
+	# Function for file download
+	download_file() {
+	    read -p "Enter the path of the file to download from the server: " remote_file
+	    read -p "Enter the local path to save the file: " local_path
+	    read -p "Use password or certificate for authentication? (p/c): " auth_method
+	    read -p "Enter your SOCKS5 proxy (host:port): " proxy
 	
-	# Check user action
- 
-		if [[ "$action" == "u" ]]; then
-		    upload_file
-		elif [[ "$action" == "d" ]]; then
-		    download_file
-		else
-		    echo "Invalid option. Please choose 'u' to upload or 'd' to download."
-		fi
+	    # Handle authentication method
+	    if [[ "$auth_method" == "p" ]]; then
+	        read -sp "Enter your password: " password
+	        sshpass -p "$password" rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -o StrictHostKeyChecking=no" "$user@$ip:$remote_file" "$local_path"
+	    elif [[ "$auth_method" == "c" ]]; then
+	        read -p "Enter the path to your private key: " private_key
+	        rsync -avz -e "ssh -o ProxyCommand=nc -X 5 -x $proxy %h %p -i $private_key -o StrictHostKeyChecking=no" "$user@$ip:$remote_file" "$local_path"
+	    else
+	        echo "Invalid authentication method."
+	    fi
+	}
+	
+	# Read server IP and user information
+	read -p "Enter the server IP address: " ip
+	read -p "Enter your username: " user
+	
+	# Main loop
+	while true; do
+	    show_menu
+	    read -p "Choose an option: " option
+	
+	    case $option in
+	        1) upload_file ;;
+	        2) download_file ;;
+	        3) echo "Exiting..."; exit 0 ;;
+	        *) echo "Invalid option. Please try again." ;;
+	    esac
+	done
+
 
 -------------------------------------------- version 2 -----------------------------------------------------------
 
