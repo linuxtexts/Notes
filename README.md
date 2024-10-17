@@ -1,26 +1,25 @@
 -------------------- Check nginx status at remoute server ------------------------------------------------
 
 	#!/bin/bash
-	
-	# Указываем IP адрес удаленного сервера
+
+	# Specify the IP address of the remote server
 	REMOTE_SERVER="121.66.33.11"
 	
-	# Порт для подключения по SSH
+	# SSH port for connection
 	SSH_PORT="22333"
 	
-	# Путь к файлу для проверки на удаленном сервере
+	# Path to the log file to check on the remote server
 	LOG_FILE="/var/log/check_nginx_script.log"
 	
-	# Команда для проверки файла на удаленном сервере
+	# Command to check the file on the remote server
 	CHECK_COMMAND="grep 'Failed to reload Nginx' $LOG_FILE"
 	
-	# Подключаемся к удаленному серверу по указанному порту и выполняем команду
+	# Connect to the remote server via the specified port and execute the command
 	if ssh -q -p $SSH_PORT $REMOTE_SERVER "$CHECK_COMMAND"; then
 	    echo "Warning: check nginx at server $REMOTE_SERVER"
 	else
 	    echo "Nginx is working correctly on server $REMOTE_SERVER"
 	fi
-
 
 
 -------------------- Password encrypt script -------------------------------------------------------------
