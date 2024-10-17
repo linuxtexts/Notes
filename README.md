@@ -14,12 +14,29 @@
 	# Command to check the file on the remote server
 	CHECK_COMMAND="grep 'Failed to reload Nginx' $LOG_FILE"
 	
-	# Connect to the remote server via the specified port and execute the command
-	if ssh -q -p $SSH_PORT $REMOTE_SERVER "$CHECK_COMMAND"; then
-	    echo "Warning: check nginx at server $REMOTE_SERVER"
-	else
-	    echo "Nginx is working correctly on server $REMOTE_SERVER"
-	fi
+	# Infinite loop to run the script every 3 hours
+	while true; do
+	    # Attempt to connect to the remote server via the specified port and execute the command
+	    ssh -q -o ConnectTimeout=10 -o ProxyCommand="nc -X 5 -x 127.0.0.1:9050 %h %p" -i $dedic1_cert -p $SSH_PORT root$REMOTE_SERVER "$CHECK_COMMAND" > /dev/null 2>&1
+	    SSH_EXIT_CODE=$?
+	
+	    # Check if the SSH connection was successful
+	    if [ $SSH_EXIT_CODE -eq 0 ]; then
+	        # Check if the 'Failed to reload Nginx' line is present in the log file
+	        if ssh -q -p $SSH_PORT $REMOTE_SERVER "$CHECK_COMMAND"; then
+	            echo "Warning: check nginx at server $REMOTE_SERVER"
+	        else
+	            echo "Nginx is working correctly on server $REMOTE_SERVER"
+	        fi
+	    else
+	        # Output a message if the SSH connection failed
+	        echo "SSH connection failed to server $REMOTE_SERVER"
+	    fi
+	
+	    # Wait for 3 hours (10800 seconds) before running the check again
+	    sleep 10800
+	done
+
 
 
 -------------------- Password encrypt script -------------------------------------------------------------
