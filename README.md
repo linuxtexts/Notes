@@ -1,6 +1,11 @@
-3x-ui , marzban
-https://github.com/Gozargah/Marzban?tab=readme-ov-file
-https://app.bitlaunch.io/signup
+---temp----------
+
+	3x-ui , marzban
+	https://github.com/Gozargah/Marzban?tab=readme-ov-file
+	https://app.bitlaunch.io/signup
+	
+	yourserver.s
+ e
 ___qcurl___________________________________________________________________________________________________________
 
         qcurlftpfs
