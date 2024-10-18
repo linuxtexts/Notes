@@ -1,3 +1,25 @@
+-------------- script to send text message to telegram -----------------------------
+
+        #!/bin/bash
+
+        # Variables
+        BOT_TOKEN="111222333"   # Your bot token obtained from @BotFather
+        CHAT_ID="227909746"       # Your Chat ID
+        MESSAGE="Warning Nginx is down"  # Message text
+
+        # Telegram API URL
+        URL="https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
+
+        # Sending the message via curl
+        curl -s -X POST $URL -d chat_id=$CHAT_ID -d text="$MESSAGE"
+
+        # Output result
+        if [ $? -eq 0 ]; then
+          echo "Message sent successfully"
+        else
+          echo "Failed to send message"
+        fi
+
 -------------------- Check nginx status at remoute server ------------------------------------------------
 
 	#!/bin/bash
