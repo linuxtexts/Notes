@@ -1,3 +1,16 @@
+
+___qcurl___________________________________________________________________________________________________________
+
+        qcurlftpfs
+                yum install curlftpfs -y
+
+        Copy file with Curl
+                curl -o do-bots.txt  https://www.digitalocean.com/robots.txt
+
+        #send curl through proxy socks5
+                curl --socks5 <proxy_host:proxy_port> <URL>
+
+
 -------------- script to send text message to telegram -----------------------------
 
         #!/bin/bash
