@@ -4,8 +4,7 @@
 	https://github.com/Gozargah/Marzban?tab=readme-ov-file
 	https://app.bitlaunch.io/signup
 	
-	yourserver.s
- e
+	yourserver.se
 ___qcurl___________________________________________________________________________________________________________
 
         qcurlftpfs
