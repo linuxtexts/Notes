@@ -4,58 +4,59 @@ ______ Telegram Bot ____________________________________________________________
 	from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 	from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 	
-	# Функция для выполнения bash-скрипта
+	# Function to execute the bash script
 	def execute_bash_script():
-	    script_path = "/user/local/admin/new_key.sh"  # Укажите путь к вашему скрипту
+	    script_path = "/user/local/admin/new_key.sh"  # Specify the path to your script
 	    try:
 	        result = subprocess.run([script_path], capture_output=True, text=True)
-	        return result.stdout  # Возвращаем результат выполнения скрипта
+	        return result.stdout  # Return the output of the script
 	    except Exception as e:
-	        return f"Ошибка при выполнении скрипта: {str(e)}"
+	        return f"Error executing script: {str(e)}"
 	
-	# Обработчик команды /start
+	# Handler for the /start command
 	def start(update: Update, context: CallbackContext) -> None:
 	    user = update.effective_user
-	    # Приветственное сообщение
-	    update.message.reply_text(f'Привет, {user.first_name}! Нажмите на кнопку, чтобы получить ключ.')
+	    # Welcome message
+	    update.message.reply_text(f'Hello, {user.first_name}! Click the button to get a key.')
 	
-	    # Создание кнопки
-	    keyboard = [[InlineKeyboardButton("Получить ключ", callback_data='get_key')]]
+	    # Create a button
+	    keyboard = [[InlineKeyboardButton("Get key", callback_data='get_key')]]
 	    reply_markup = InlineKeyboardMarkup(keyboard)
 	
-	    # Отправка сообщения с кнопкой
-	    update.message.reply_text("Нажмите на кнопку ниже, чтобы запросить ключ:", reply_markup=reply_markup)
+	    # Send message with the button
+	    update.message.reply_text("Click the button below to request a key:", reply_markup=reply_markup)
 	
-	# Обработчик нажатий на кнопки
+	# Button click handler
 	def button_handler(update: Update, context: CallbackContext) -> None:
 	    query = update.callback_query
 	    query.answer()
 	
-	    # Проверка, какую кнопку нажал пользователь
+	    # Check which button the user clicked
 	    if query.data == 'get_key':
-	        # Выполнение скрипта и получение результата
+	        # Execute the script and get the result
 	        script_output = execute_bash_script()
 	
-	        # Отправка результата пользователю
-	        query.edit_message_text(text=f"Ваш ключ: {script_output}")
+	        # Send the result back to the user
+	        query.edit_message_text(text=f"Your key: {script_output}")
 	
-	# Основная функция
+	# Main function
 	def main() -> None:
-	    # Замените 'YOUR_TOKEN' на ваш токен бота
+	    # Replace 'YOUR_TOKEN' with your bot's token
 	    updater = Updater("YOUR_TOKEN")
 	
-	    # Регистрация обработчиков
+	    # Register handlers
 	    updater.dispatcher.add_handler(CommandHandler("start", start))
 	    updater.dispatcher.add_handler(CallbackQueryHandler(button_handler))
 	
-	    # Запуск бота
+	    # Start the bot
 	    updater.start_polling()
 	
-	    # Запуск до принудительной остановки
+	    # Run the bot until manually stopped
 	    updater.idle()
 	
 	if __name__ == '__main__':
 	    main()
+
 
 
 
