@@ -1,3 +1,65 @@
+______ Telegram Bot ____________________________________________________________________________________________
+
+	import subprocess
+	from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+	from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
+	
+	# Функция для выполнения bash-скрипта
+	def execute_bash_script():
+	    script_path = "/user/local/admin/new_key.sh"  # Укажите путь к вашему скрипту
+	    try:
+	        result = subprocess.run([script_path], capture_output=True, text=True)
+	        return result.stdout  # Возвращаем результат выполнения скрипта
+	    except Exception as e:
+	        return f"Ошибка при выполнении скрипта: {str(e)}"
+	
+	# Обработчик команды /start
+	def start(update: Update, context: CallbackContext) -> None:
+	    user = update.effective_user
+	    # Приветственное сообщение
+	    update.message.reply_text(f'Привет, {user.first_name}! Нажмите на кнопку, чтобы получить ключ.')
+	
+	    # Создание кнопки
+	    keyboard = [[InlineKeyboardButton("Получить ключ", callback_data='get_key')]]
+	    reply_markup = InlineKeyboardMarkup(keyboard)
+	
+	    # Отправка сообщения с кнопкой
+	    update.message.reply_text("Нажмите на кнопку ниже, чтобы запросить ключ:", reply_markup=reply_markup)
+	
+	# Обработчик нажатий на кнопки
+	def button_handler(update: Update, context: CallbackContext) -> None:
+	    query = update.callback_query
+	    query.answer()
+	
+	    # Проверка, какую кнопку нажал пользователь
+	    if query.data == 'get_key':
+	        # Выполнение скрипта и получение результата
+	        script_output = execute_bash_script()
+	
+	        # Отправка результата пользователю
+	        query.edit_message_text(text=f"Ваш ключ: {script_output}")
+	
+	# Основная функция
+	def main() -> None:
+	    # Замените 'YOUR_TOKEN' на ваш токен бота
+	    updater = Updater("YOUR_TOKEN")
+	
+	    # Регистрация обработчиков
+	    updater.dispatcher.add_handler(CommandHandler("start", start))
+	    updater.dispatcher.add_handler(CallbackQueryHandler(button_handler))
+	
+	    # Запуск бота
+	    updater.start_polling()
+	
+	    # Запуск до принудительной остановки
+	    updater.idle()
+	
+	if __name__ == '__main__':
+	    main()
+
+
+
+
 ---temp----------
 
 	3x-ui , marzban
