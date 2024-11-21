@@ -1329,28 +1329,18 @@ ___qsshfs_______________________________________________________________________
 
 ___qnetwork____________________________NETWORK______________________________________________________________________
 
-	#Change hostname - https://www.tecmint.com/set-change-hostname-in-centos-7/
+	#Change qhostname - https://www.tecmint.com/set-change-hostname-in-centos-7/
 	#network (NFS - network file system)
 		watch 'netstat -na | grep -v 8080 | grep tcp | sort|grep EST'
 
 	#check all connection status
 		netstat -tan | awk '{print $6}' | sort | uniq -c
-
-	#Disable ping icmp (twoside ping)
-		https://xakinfo.ru/os/kak-ubrat-opredelenie-tunnelja-dvustoronnij-ping-v-vpn/
-		iptables -A INPUT --proto icmp -j DROP
-
+  
 	#Show all open ports
 		netstat -nap | grep LISTEN
 		or
 		netstat -lntup
-
-	#Restart network
-		service network restart
-
-	#Show all ip adress on server
-		ip addr show
-
+  
 	#Show route table in mac os
 		netstat -rn
 
@@ -1707,12 +1697,7 @@ ___qSCREEN______________________________________________________________________
 	bind _ resize max
 
 	caption always "%{= kw}%-w%{= gW}%n %t%{-}%+w %-= activity - %Y-%m-%d %C:%s"
-	...........................................................................................................................
-
-	
-	#New terminal 		---> ^A c
-	#Next windows 		---> ^A space.
-	#Previous windows	---> ^A backspace.
+	..............................................................................................................
 	#Next windows 		---> ^A then [n]. (works for n∈{0,1…9})
 	#Switch between terminals using list ---> ^A+a then " (useful when more than 10 terminals)
 	#Send ^A to the underlying terminal ^A then a.
