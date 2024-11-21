@@ -16,7 +16,6 @@ _____ qWindows _________________________________________________________________
 	Set-ExecutionPolicy Bypass
 	Get-AutopilotDiagnosticsCommunity.ps1
 
-	![image](https://github.com/user-attachments/assets/56722de2-5782-4a57-8a54-905ce13690d4)
 	.......................................................................................................
  	#Zertifikate Problem
 	Ich habe unter V:\#VERKNUEPFUNGEN\Certs unsere internen Root und Sub CA Zertifikate abgelegt. Die Benutzer können certmgr.msc aufrufen, und dann unter Vertrauenswürdige Stammzertifizierungstellen -> Zertifikate die beiden Dateien mit "root" im Name importieren, und dann unter Zwischenzertifizierungsstellen -> Zertifikate die beiden Zertifikate mit "sub" im Namen importieren.
