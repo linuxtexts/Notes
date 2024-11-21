@@ -1462,13 +1462,13 @@ ___qUbuntu______________________________________________________________________
 
 	---------------------------------------------------------
 	install Hardware Sensor Indicator
-	------------------------------------------------------------------------------------------
+	---------------------------------------------------------
 	qi3 windows tail manager (HOTKEYS - https://i3wm.org/docs/refcard.html)
 	tail manager yabai - https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
 	sudo apt install i3
 	/usr/bin/i3-config-wizard
 
-___qterminal (qbash) _________________OTHER COMMANDS___________________________________________________________________
+___ qbash ____________________________________________________________________________________
 
 	#To watch / show function or other in bash 
 		type [function]
@@ -1501,13 +1501,6 @@ ___qterminal (qbash) _________________OTHER COMMANDS____________________________
 
     	#Current time/date Plus one hour
        		echo -n $(($(date +'%l')+1));echo -n $(date +' :%m %p')' '; echo -n $(date +'%A %d');
-
-    	#Cut last symbol in line
-       		sed 's/.$//'
-
-    	#Check if var not null
-		if [[ -z $var ]];then echo 'var is null';fi
-		if [[ -n $var ]];then echo 'var is not null';fi
 
     	#How to check if a string contains a substring in Bash
 		string='My long string'
