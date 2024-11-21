@@ -18,7 +18,7 @@ _____ qWindows _________________________________________________________________
 
 	.......................................................................................................
  	#Zertifikate Problem
-	Ich habe unter V:\#VERKNUEPFUNGEN\Certs unsere internen Root und Sub CA Zertifikate abgelegt.
+	Ich habe unter V:\VERKNUEPFUNGEN\Certs unsere internen Root und Sub CA Zertifikate abgelegt.
  	Die Benutzer können certmgr.msc aufrufen, und dann unter Vertrauenswürdige Stammzertifizierungstellen -> Zertifikate die
   	beiden Dateien mit "root" im Name importieren, und dann unter Zwischenzertifizierungsstellen -> Zertifikate die beiden 
    	Zertifikate mit "sub" im Namen importieren.
