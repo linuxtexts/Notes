@@ -1101,6 +1101,7 @@ ___qSMART__________________________________________________________
 
 
 ___qMySQL_________________________________________________________________________________________________________
+
 	Step 1: Install MariaDB (if not already installed)
 		sudo apt update
 		sudo apt install mariadb-server
