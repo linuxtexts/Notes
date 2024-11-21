@@ -83,17 +83,6 @@ ______ qTelegram Bot ___________________________________________________________
 	if __name__ == '__main__':
 	    main()
 
-___qcurl___________________________________________________________________________________
-
-        qcurlftpfs
-                yum install curlftpfs -y
-
-        Copy file with Curl
-                curl -o do-bots.txt  https://www.digitalocean.com/robots.txt
-
-        #send curl through proxy socks5
-                curl --socks5 <proxy_host:proxy_port> <URL>
-
 
 -------------- script to send text message to telegram -----------------------------
 
@@ -432,12 +421,16 @@ ___qcurl________________________________________________________________________
 	done
 
 
+___qcurl___________________________________________________________________________________
 
+        qcurlftpfs
+                yum install curlftpfs -y
 
+        Copy file with Curl
+                curl -o do-bots.txt  https://www.digitalocean.com/robots.txt
 
-
-
-
+        #send curl through proxy socks5
+                curl --socks5 <proxy_host:proxy_port> <URL>
 
 ----------------------alias--------------------------------------------------------------------------------
 
