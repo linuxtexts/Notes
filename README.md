@@ -5,8 +5,9 @@ https://habr.com/ru/articles/658879/ - vds
 _____ qWindows ________________________________________________________________________________________________
 
 	#error by add to Autopilot
- 		Sift+F10
-	Typ powerchell
+ 	#Press - Sift+F10
+	#Typ - powerchell
+ 	#then type in terminal:
 	Install-Script -name get-autopilotDiagnosticscommunity
 	J
 	J
