@@ -1,6 +1,21 @@
 https://habr.com/ru/articles/347106/
 https://habr.com/ru/articles/658879/ - vds
 
+
+_____ qWindows ________________________________________________________________________________________________
+
+	#error by add to Autopilot
+ 		Sift+F10
+	Typ powerchell
+	Install-Script -name get-autopilotDiagnosticscommunity
+	J
+	J
+	J
+	Set-ExecutionPolicy Bypass
+	Get-AutopilotDiagnosticsCommunity.ps1
+
+	![image](https://github.com/user-attachments/assets/56722de2-5782-4a57-8a54-905ce13690d4)
+
 ______ Telegram Bot ____________________________________________________________________________________________
 
 	import subprocess
