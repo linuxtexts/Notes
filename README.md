@@ -1107,21 +1107,27 @@ ___qMySQL_______________________________________________________________________
 		sudo apt install mariadb-server
 	 	sudo systemctl start mariadb
 		sudo systemctl enable mariadb
+  
  	Step 2: Secure the MariaDB installation
  		sudo mysql_secure_installation
+   
    	Step 3: Log in to the MariaDB shell
     		sudo mysql -u root -p
+      
       	Step 4: Create a database
 		CREATE DATABASE your_database_name;
   	Step 5: Create a user
    		CREATE USER 'your_user_name'@'localhost' IDENTIFIED BY 'your_password';
      	Step 6: Grant privileges
+      
       		GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_user_name'@'localhost';
 		FLUSH PRIVILEGES;
   		EXIT;
+    
     	Step 8: Verify the user and database
      		mysql -u your_user_name -p
        		SHOW DATABASES;
+	 
   	Step 9: Import the Database
    		mysql -u your_user_name -p your_database_name < /path/to/your_file.sql
 			
