@@ -60,17 +60,6 @@ ______ Telegram Bot ____________________________________________________________
 	if __name__ == '__main__':
 	    main()
 
-
-
-
-
----temp----------
-
-	3x-ui , marzban
-	https://github.com/Gozargah/Marzban?tab=readme-ov-file
-	https://app.bitlaunch.io/signup
-	
-	yourserver.se
 ___qcurl___________________________________________________________________________________________________________
 
         qcurlftpfs
