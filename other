@@ -80,18 +80,6 @@ ___qExif___________________________________________________________
 	#Manual set date
 		exiftool -AllDates="2013:08:27 08:50:14" ~/Camera3/Camera/IMG_8458_1.mov
 
-___qVNC on remoute server__________________________________________________________________________________________
-	#install vnc server
-		https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
-	#make tunel for vnc viewer on local pc
-		ssh -i ~/.ssh/id_rsa -L59000:localhost:5901 root@ip-address -Nf
-
-	#kill VNC
-		vncserver -kill :1
-
-	#start VNC on localhost
-		vncserver -localhost
-
 ___qbase64__________________________________________________________________________________________________________
 	#encode to base64 ---> echo password | base64
 	#decode from base64 ---> echo 'password' | base64 --decode
@@ -128,42 +116,6 @@ ___qwindows make usb with windows setup_________________________________________
 		sudo pmset -a sleep 0; sudo pmset -a hibernatemode 0; sudo pmset -a disablesleep 1;
 	#enable 
 		sudo pmset -b disablesleep 0;sudo pmset -b sleep 5;
-
-___qUbuntu_________________________________________________________________________________________
-	#Replace Alt and command (the interrupt command will replaced from Ctrl+c to Shift+Ctrl+c)
-
-	............................................................................................. vim ~/.Xmodmap
-	clear control
-	clear mod4
-
-	keycode 105 =
-	keycode 206 =
-
-	keycode 133 = Control_L NoSymbol Control_L
-	keycode 134 = Control_R NoSymbol Control_R
-	keycode 37 = Super_L NoSymbol Super_L
-
-	add control = Control_L
-	add control = Control_R
-	add mod4 = Super_L
-	............................................................................................................
-	xmodmap ~/.Xmodmap
-
-	#Disable Double Tap (need install synclient) https://askubuntu.com/questions/939065/disable-double-tap-but-keep-one-tap-to-click-enabled-on-touchpad
-	synclient MaxTapMove=2
-
-	#run script start.sh at boot
-		echo "script body" > ~/start.sh
-		cp ~/start.sh /etc/init.d/start.sh
-		sudo update-rc.d start.sh defaults
-
-	---------------------------------------------------------
-	install Hardware Sensor Indicator
-	---------------------------------------------------------
-	qi3 windows tail manager (HOTKEYS - https://i3wm.org/docs/refcard.html)
-	tail manager yabai - https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
-	sudo apt install i3
-	/usr/bin/i3-config-wizard
 
 ___qsort_________________________________________________
 	sort -k2 -n -t '['
@@ -215,16 +167,7 @@ ___qLocale____________________________________________________________________
 	#In Centos add/create to /etc/environment
 		LANG=en_US.UTF-8
 		LC_ALL=en_US.UTF-8
-
-___qarh (q7zip,tar.gz)_qtar__qzip______________________________________________________________________________________
-	#Unarhiv 7zip file with password (q7z,qz7)
-	7z -pPASSWORD x file.zip
-
-	#pack   ---> tar -zcvf output_file.tar.gz /foder_what_to_encrypt
-	       |   | gzip vds1
-	#unpack ---> tar zxvf hydra-4.1-src.tar.gz
-
-	unrar e file.rar
+	
 ___qDD________________________________________________________________________________________________________________
 	https://habr.com/ru/post/117050/
 
