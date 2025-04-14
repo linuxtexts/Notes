@@ -50,3 +50,6 @@ $(whoami -upn)
 
 #Mount
 Get-PSDrive -PSProvider FileSystem
+
+#Install Hyper-V Manager
+dism.exe /Online /Enable-Feature /FeatureName:Microsoft-Hyper-V-All /All /LimitAccess /Restart
