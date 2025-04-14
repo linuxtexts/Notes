@@ -1,0 +1,204 @@
+	Copy current nuber of line to clipboard
+	       :exe "!echo " . line(".") . " | pbcopy"
+	       :exec '! sed -n "' . line(".").'p" ~/.vimrc |tr -d '\n'| pbcopy
+	       :exec '! sed -n "'.line('.').'p" $HOME/.vimrc | tr -d "\n" | pbcopy'
+
+	echo current line
+	       :echo line(".") 
+	       :echo getline(".")
+
+	Copy current line to clipboard
+	       :echo getline(".")|y
+	       
+	Copy current line to clipboard
+	       :.y
+	       :.$y
+	       :exec '! echo '.getline('.').'|pbcopy'
+	       :exec "'! echo '.getline('.').'" \|tr -d "\n" \|pbcopy'
+	Copy current line to clipboard with deleted Tab(s)
+	       :s/\t//g|y|u|nohlsearch
+	       	# s/\t//g - delete tabs
+	       	# y - copy to clipboard
+	       	# u - undo
+	       	# nohlsearch - deselect fields
+	       #or
+	       :echo getline('.') | s/\t//g |y|undo|nohlsearch
+	       #or
+	       :.s/^\s*//|y|u
+	       nmap <C-c> :echo getline('.') \| s/\t//g \|y \|undo \| g/Ebw72YWsdljfslsdfsddkjf/
+	       	# echo getline('.') - get line
+	       	# s/\t//g - delete Tabs
+	       	# y - copy to clipboard
+	       	# undo
+	       	# g/Ebw72YWsdsdvsdcljfsldkjf/ - just search anything to unselect/unmark tab spaces
+
+	Copy current line to clipboard with "sed"
+	       :exec '! sed -n "'.line('.').'p" %:p \| tr -d "\n" \| pbcopy'
+	Copy the line number in clipboard
+	       :705y+
+	       :700,705y+
+
+
+	Insert the file foo.txt below the cursor.
+	       :r foo.txt
+	
+	Turn color in Vim during the session
+	       :colo delek
+
+	:help expand
+	:echo expand("%:p")    " absolute path
+	:echo expand("%:p:h")  " absolute path dirname
+	:echo expand("%:p:h:h")" absolute path dirname dirname
+	:echo expand("%:.")    " relative path
+	:echo expand("%:.:h")  " relative path dirname
+	:echo expand("%:.:h:h")" relative path dirname dirname
+	:echo expand("<sfile>:p")  " absolute path to [this] vimscript
+
+
+	work with Multiple Line
+	       :set number (show line numbers)
+	       :set nonumber (hide numbers of lines)
+	       :35,77s/^/#/ (it comment line from 35 to 77)
+	       :35,77s/^#// (remove first "#" from 35 to 77)
+	       #with HotKey	
+	       Set "#" at begin of line -> go to "Visual Block"[Shift+Ctrl+v] -> select lines area -> [Shift+i] -> press "#" -> press "ESC" 2 times
+	       Delete "#" -> go to "Visual Block"[Shift+Ctrl+v] -> select what to delete -> press "x"	
+
+
+	use Visual Block mode ---> Ctrl+Shift+v
+
+	HEX editor	 ---> :%!xxd
+	exit HEX mode 	 ---> :%!xxd -r
+
+	Shift all selected lines
+	       - go to Visual Mode Shift+v
+	       - press Shift+> 
+
+	Navigation ---> E, W, B
+
+	show curent file encode
+	       :set fileencoding
+
+	convert file to UTF-8
+	       :set fileencoding=utf8
+	       :w myfilename
+
+	set current encode of file cp1251      	---> :e ++enc=cp1251
+	set in what encode a file will be save 	---> :set fileencoding=utf-8
+
+	fast navigation - wWEe	(https://stackoverflow.com/questions/8750275/vim-super-fast-navigation)
+	clear history search 				---> :call histdel('/')
+	encrypt file    				---> vim -x any.file
+	:set smartcase 					---> Ignore case when searching if there are no upper case characters in the search expression.
+	register independent search 			---> :set ignorecase
+	Search two or more words			---> /text.*text2
+	Vim replace text				---> :%s#search#replace#gc
+	       					     :%s/<search_term>/<replace_term>/g
+	Converts upper to lower each latter on each line	---> :%s/^./\u&/g
+	Vim delete Tab space (\t - Tab)		---> :%s/\t//g
+	Count searches					---> :set shortmess-=S
+	       					---> >>> %s/>>>search-word//gn
+	
+	Delete word - dw
+	Delete next 5 words - 5dw
+	Delete next 5 lines - 5dd
+	Delete from the current position to the first symbol of line - d0
+	Delete from the current position to the end of line - d$
+	Delete from the current position to the end of file - dG
+
+	execute the command pwd and pase result in vim   ---> !!pwd 
+	execute current line in bash			 ---> :.w !bash
+	open file					  ---> edit filename
+	open shell from vim (type exit to return to vim) ---> :sh    (https://www.sourceallies.com/2009/11/vim-splits-an-introduction/)
+	split window 				 	  ---> :split
+	split horiz. and open a file			  ---> :sp filename
+	Jump betwen splited windows 			  ---> C+w w
+	resize split					  --->:res +5 (or ---> :res -5)
+	help 	      					  ---> :help
+	where am I   					  ---> ^G
+	syntaxis turn on 				  ---> :syntax on
+	
+	jump back to the previous (older) location	  ---> ^O
+	jump forward to the next (newer) location	  ---> ^I (same as Tab)
+
+	pase line from buffer 		  ---> p
+
+	copy to clipboard		  ---> (use Visual Mode for select text) than type (:w !pbcopy)
+	copy all lines in file to clipboard ---> (use Visual Mode for select text) than type (:%w !pbcopy)
+	paste from clipboard Mac OS	  ---> :r !pbpaste
+	       			  ---> :r path_to_file (Example :r ~/.ssh/step2)
+	paste from clipboard to file	  ---> pbpaste > file.txt
+	copy to clipboard Linux	  ---> cat input.txt | xclip -i 
+
+	reopen without saving 		  ---> :edit!
+
+	Map key
+	Show what map on a key		---> :nmap <key>		
+
+	#Change in ~/.config/ranger/rifle.conf -> mime ^text,  label editor = ${VISUAL:-$EDITOR} -- "$@"  
+	texecuteo
+	mime ^text,  label editor = vim -i "NONE" "$1"  
+
+	To reload ~/.vimrc ---> :so ~/.vimrc
+....................................................................................... ~/.vimrc ................................
+augroup autocom
+    autocmd!
+     autocmd VimLeave * !> /Users/name/.viminfo
+augroup END
+
+set foldmethod=marker
+set foldmarker=<-----------------------------------,-------------------------------->
+
+set viminfo="NONE"
+set nocompatible
+set backspace=indent,eol,start
+set shortmess-=S
+set t_Co=256                    " 256 colors terminal
+set cursorline                  " Highlight current line
+set laststatus=1                " Always show status line was '2' I set '1'
+set numberwidth=5               " width of numbers line (default on gvim is 4)
+set report=0                    " Show all changes.
+set showmode                    " Show the current mode.
+set showcmd                     " show partial command on last line of screen.
+set showmatch                   " show matching parenthesis
+set splitbelow splitright       " how to split new windows.
+set title                       " Show the filename in the window title bar.
+set scrolloff=5                 " Start scrolling n lines before horizontal border of window.
+set sidescrolloff=7             " Start scrolling n chars before end of screen.
+set sidescroll=1                " The minimal number of columns to scroll horizontally.
+set cryptmethod=blowfish2
+set nomodeline                  "Disable modeline for sequrity riason
+set background=dark             "Use the Solarized Dark theme
+set nobackup
+set nowritebackup
+set noswapfile
+syntax on
+colorscheme desert
+set ignorecase
+set smartcase
+set clipboard=unnamed
+set mouse=v
+set hlsearch                    " select search words while use searching
+set nocompatible                " Make Vim more useful
+set clipboard=unnamed           " Use the OS clipboard by default (on versions compiled with clipboard
+set nostartofline               " Don’t reset cursor to start of line when moving around.
+set ruler                       " Show the cursor position
+" Centralize backups, swapfiles and undo history
+set backupdir=~/.vim/backups
+set directory=~/.vim/swaps
+set shortmess-=S
+if exists("&undodir")
+    set undodir=~/.vim/undo
+endif
+
+"execute current cursor line
+nmap <F6> :exec '!'.getline('.')
+nmap <F2> :g/Ebw72YW/y+
+nmap <F3> :e ++enc=cp1251
+nmap <C-c> :.s/^\s*//\|y\|u\|nohlsearch
+nmap <F5> :.w !bash
+
+nmap Q : <nop>
+nmap <SHIFT-c>: <nop>
+
+hi Folded ctermbg=242
