@@ -25,22 +25,6 @@ ___qps_________________________________________________________
 		ps -ejH
 	#Show all process
 		ps -elf
-
-___qnetstat____SS analog netstat_______________________________
-	#Show all connection
-                netstat -tunup
-        #Show all IP adress connection at 443 port
-                netstat -tn 2>/dev/null | awk '$4 ~ /:443$/ && $6 == "ESTABLISHED" {print $5}' | cut -d':' -f1 | sort | uniq -c | sort -n
-                #you can limitet max connection from one IP address with IPTABLES (example 20)
-                        iptables -t filter -I INPUT -p tcp --syn --dport 443 -m connlimit --connlimit-above 20 --connlimit-mask 32 -j DROP
-
-        #Show all rules
-                iptables -n -L -v --line-numbers
-        #Show what process on wich port works
-                netstat -tulpan | grep -i 'listen'
-        #Show a wich porgram listen a port 25
-                lsof -i :25
-
 ___qss_________________________________________________________
 	#Show all connection
 		ss -tunup
