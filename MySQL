@@ -1,0 +1,111 @@
+  Step 1: Install MariaDB (if not already installed)
+		sudo apt update
+		sudo apt install mariadb-server
+	 	sudo systemctl start mariadb
+		sudo systemctl enable mariadb
+  
+ 	Step 2: Secure the MariaDB installation
+ 		sudo mysql_secure_installation
+   
+   	Step 3: Log in to the MariaDB shell
+    		sudo mysql -u root -p
+      
+      	Step 4: Create a database
+		CREATE DATABASE your_database_name;
+  	Step 5: Create a user
+   		CREATE USER 'your_user_name'@'localhost' IDENTIFIED BY 'your_password';
+     	Step 6: Grant privileges
+      
+      		GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_user_name'@'localhost';
+		FLUSH PRIVILEGES;
+  		EXIT;
+    
+    	Step 8: Verify the user and database
+     		mysql -u your_user_name -p
+       		SHOW DATABASES;
+	 
+  	Step 9: Import the Database
+   		mysql -u your_user_name -p your_database_name < /path/to/your_file.sql
+			
+
+	#Connect to BD and make Query
+		mysql -u username -puserpass dbname -e "UPDATE mytable SET mycolumn = 'myvalue' WHERE id='myid'";
+		mysql --user=username --password=passwordtext basename
+		mysql --user=username --password=passwordtext basename -e "SELECT * FROM main WHERE id='1'";
+		mysql --user=username --password=passwordtext basename -e "SELECT * FROM user WHERE password='aaaaabbbbb'";
+		
+	#Show tables of database
+		#Enter in mysql
+		use name_of_database;
+		show tables;
+
+	#Show columns from [table name];
+		show columns from table;
+	
+	select post_text from posts where post_text like "%http:%" and id<100;
+	update posts SET post_text = REPLACE(post_text, 'http://name', 'https://name') WHERE post_text LIKE '%http://name%';
+	
+	#Replace
+	UPDATE main SET other_cont_en = REPLACE(other_cont_en, ' width="800" height="600"', '') WHERE INSTR(other_cont_en, '%width="800"%') > 0;
+	SELECT * FROM `main` WHERE `other_cont_en` like '% width="800" height="600"%'
+
+	#Make dump-file(backup base) with base MySQL  
+		mysqldump --single-transaction -u user -p DBNAME > backup.sql
+
+	#Recover from dump-file to MySQL
+		mysql basename -u username -p < base.sql
+	-------------------------------------------------------------------------------
+	/usr/bin/mysqladmin -u root password 'new-password'
+	mysql -u root -p
+	mysql> CREATE DATABASE name_bae;
+	mysqladmin -u root -p'oldpassword' password newpass
+	-------------------------------------------------------------------------------
+	#Install qMariaDB
+		yum remove mysql mysql-server
+		mv /var/lib/mysql /var/lib/mysql_old_backup
+		yum install mariadb-server -y
+		yum install mariadb -y
+		chmod -R 777 /var/lib/mysql/
+		systemctl enable mariadb.service
+		service mariadb start
+		/usr/bin/mysql_secure_installation
+
+		#Enter current password for root (enter for none): Enter
+		#Set root password? [Y/n]: Y
+		#New password: <your-password>
+		#Re-enter new password: <your-password>
+		#Remove anonymous users? [Y/n]: Y
+		#Disallow root login remotely? [Y/n]: Y
+		#Remove test database and access to it? [Y/n]: Y
+		#Reload privilege tables now? [Y/n]: Y
+
+	-------------------------------------------------------------------------------
+	#Reset password for MySQL
+		service mariadb stop
+		mysqld_safe --skip-grant-tables &
+		mysql -u root
+		mysql> use mysql;
+		mysql> update user set password=PASSWORD("NEW-ROOT-PASSWORD") where User='root';
+		mysql> flush privileges;
+		mysql> quit
+		service mariadb start
+		mysql -u root -p (check)
+	-------------------------------------------------------------------------------
+	#Create user and database
+		mysql -u root -p
+		GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' IDENTIFIED BY '7dfg27fsd';
+	#then login as new user ---> mysql -u newuser -p
+	#and create database for user ---> CREATE DATABASE `newuser`;
+	-------------------------------------------------------------------------------
+	#check and fix mysql errors and problem ---> mysql_upgrade -uroot -p
+	#chemk if service mariadb active ---> systemctl is-active mariadb
+
+	#drop database
+		mysql -u root -p
+		show databases;
+		drop database name; (if is there "-" use ---> drop database `name`;)
+
+
+	#ERROR mariadb cant start after Reset password for MySQL
+	#use ---> ps aux | grep -i mysql
+	#and kill all mysql processes and start MariaDB again
