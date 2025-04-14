@@ -1,11 +1,7 @@
 https://habr.com/ru/articles/347106/
 https://habr.com/ru/articles/658879/ - vds
 
-
-
-
 ______ qTelegram Bot ____________________________________________________________________________________________
-
 	import subprocess
 	from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 	from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
@@ -124,147 +120,6 @@ ______ qTelegram Bot ___________________________________________________________
 	    # Wait for 3 hours (10800 seconds) before running the check again
 	    sleep 10800
 	done
-
-
-
--------------------- Password encrypt script -------------------------------------------------------------
-
-	#!/bin/bash
-
-	PASSWORD_FILE="passwords.enc"
-	PUBLIC_KEY="my_rsa_key.pub"  # Путь к вашему публичному ключу
-	PRIVATE_KEY="my_rsa_key"     # Путь к вашему приватному ключу
-	
-	# Функция для создания файла, если он не существует
-	create_encrypted_file() {
-	    echo -n "" > "$PASSWORD_FILE"
-	}
-	
-	# Функция для шифрования с использованием публичного ключа
-	encrypt_file() {
-	    echo "$1" | openssl rsautl -encrypt -inkey "$PUBLIC_KEY" -pubin -out "$PASSWORD_FILE"
-	}
-	
-	# Функция для дешифрования с использованием приватного ключа
-	decrypt_to_variable() {
-	    local decrypted_content=$(openssl rsautl -decrypt -inkey "$PRIVATE_KEY" -in "$PASSWORD_FILE" 2>/dev/null)
-	    echo "$decrypted_content"
-	}
-	
-	# Добавление пароля с описанием
-	add_password() {
-	    read -p "Enter the name of the account: " account_name
-	    read -sp "Enter the password: " password
-	    echo ""  # Для перехода на новую строку
-	    read -p "Enter a description: " description
-	
-	    # Дешифруем содержимое и добавляем новый пароль
-	    local existing_content=$(decrypt_to_variable)
-	    if [ $? -ne 0 ]; then
-	        existing_content=""  # Если расшифровка не удалась, начинаем с пустого
-	    fi
-	    
-	    # Формируем новое содержимое
-	    local new_content="$existing_content$account_name:$password:$description"$'\n'
-	    encrypt_file "$new_content"  # Шифруем новое содержимое
-	    echo "Password and description added and file encrypted."
-	}
-	
-	# Извлечение пароля
-	get_password() {
-	    local account_name="$1"
-	    local decrypted_content=$(decrypt_to_variable)
-	    
-	    local password=$(echo "$decrypted_content" | grep "^$account_name:" | cut -d':' -f2)
-	    
-	    if [ -n "$password" ]; then
-	        echo -n "$password" | pbcopy  # Копирование в буфер обмена для macOS
-	        echo "Password for '$account_name' copied to clipboard."
-	    else
-	        echo "Password for '$account_name' not found."
-	    fi
-	
-	    # Обнуляем переменные для безопасности
-	    unset decrypted_content
-	    unset password
-	}
-	
-	# Извлечение описания пароля
-	get_description() {
-	    local account_name="$1"
-	    local decrypted_content=$(decrypt_to_variable)
-	    
-	    local description=$(echo "$decrypted_content" | grep "^$account_name:" | cut -d':' -f3)
-	    
-	    if [ -n "$description" ]; then
-	        echo "Description for '$account_name': $description"
-	    else
-	        echo "Description for '$account_name' not found."
-	    fi
-	
-	    # Обнуляем переменные для безопасности
-	    unset decrypted_content
-	    unset description
-	}
-	
-	# Функция для вывода всех учетных записей и описаний (без паролей)
-	show_all_except_passwords() {
-	    local decrypted_content=$(decrypt_to_variable)
-	    
-	    if [ -z "$decrypted_content" ]; then
-	        echo "No entries found."
-	        return
-	    fi
-	
-	    # Выводим только имя учетной записи и описание
-	    echo "$decrypted_content" | while IFS=: read -r account_name _ description; do
-	        echo "Account: $account_name, Description: $description"
-	    done
-	
-	    # Обнуляем переменные для безопасности
-	    unset decrypted_content
-	}
-	
-	# Проверка существования зашифрованного файла
-	if [ ! -f "$PASSWORD_FILE" ]; then
-	    create_encrypted_file
-	fi
-	
-	# Основной блок
-	case "$1" in
-	    add)
-	        add_password
-	        ;;
-	    get_pass)
-	        if [ -z "$2" ]; then
-	            echo "Usage: ./pass_manager.sh get_pass <account_name>"
-	            exit 1
-	        fi
-	        get_password "$2"
-	        ;;
-	    desc)
-	        if [ -z "$2" ]; then
-	            echo "Usage: ./pass_manager.sh desc <account_name>"
-	            exit 1
-	        fi
-	        get_description "$2"
-	        ;;
-	    show_all)
-	        show_all_except_passwords
-	        ;;
-	    *)
-	        echo "Usage: ./pass_manager.sh {add|get_pass|desc|show_all}"
-	        ;;
-	esac
-
-
-
-	./pass_manager.sh add
- 	./pass_manager.sh get_pass googleaccount
-  	./pass_manager.sh desc googleaccount
-
-
-
 
 
 ----------------------Script download und upload files to remout server using ssh--------------------------
@@ -402,7 +257,6 @@ ______ qTelegram Bot ___________________________________________________________
 
 
 ___qcurl___________________________________________________________________________________
-
         qcurlftpfs
                 yum install curlftpfs -y
 
@@ -418,7 +272,6 @@ ___qcurl________________________________________________________________________
  	
 
 ---------------------Certbot autoupdate certificates-------------------------------------------------------
-
 	#!/bin/bash
 	
 	# Path to the log file
@@ -478,7 +331,6 @@ ___qcurl________________________________________________________________________
 
 
 #Check certbot certificates script__one time per Day________________________________________________________________________
-	
 	# Log file
 	LOG_FILE="/var/log/certbot_check.log"
 	
@@ -536,7 +388,6 @@ ___qcurl________________________________________________________________________
 
 ______________________________________________________________________________________________________________________
 #!/bin/bash
-
 	# Проверка статуса Nginx
 	if ! systemctl is-active --quiet nginx; then
 	    echo "Nginx не работает. Перезагрузка..."
@@ -554,52 +405,13 @@ ________________________________________________________________________________
 	crontab -e
 	0 * * * * /path/to/your/script.sh
 
-___qsc___________________________Spreadsheet Calculator_____________________________________________________________
-
-        https://github.com/n-t-roff/sc
-        https://www.maketecheasier.com/linux-command-line-spreadsheets/
-        https://www.linuxjournal.com/article/10699
-        http://n-t-roff.github.io/sc.1.html
-
-        git clone https://github.com/n-t-roff/sc.git
-        cd sc && ./configure && make && make install
-
-        #help - ?
-        #save file      - P
-        #edit num cell  - e
-        #set format cell - f
-        #set color      - ^TC
-        #mark cell      - ma or ms or md ...
-        #pase           - ca or cs or cd ...
-
-        gB13 — go to cell B13.
-        ir, ic — insert row, insert column.
-        ma (mb, mc and so on) — “mark” cell as a (or b, or c and so on).
-        ca (cb, cc and so on) — copy contents previously marked with ma.
-        Ctrl-f, Ctrl-b — page up or down (also pgup, pgdown).
-        dr, yr, pr — delete row, yank row, put row.
-        dc, yc, pc — delete column, yank, put column.
-        dd, yd, pd — delete, yank, put a cell.
-        = — enter a numeric value (25 or F13-D14) or formula (@sum(A2:A145)).
-        < — insert left-justified text.
-        \ — insert centered text.
-        > — insert right-justified text.
-        x — remove cell.
-        W<filename.asc> — write plain-text file.
-        P<filename.sc> — write an .sc file.
-        G<filename.sc> — read (“get”) an .sc file.
-        Zr, Zc — zap (hide) row or column.
-
-
 
 ___qsyncthing___________________________________________________________________________________________________
-
 	brew install syncthing
 	http://127.0.0.1:8384/
 	#Action -> Settings -> Connection -> disable "Enable Relaying"
  
 ___qiTerm_______________________________________________________________________________________________________
-
 	Preferences -> Advanced -> search "restor" and turnoff all
 	split pane vertical ---> cmd+d
 	split pane horisontal ---> Shift+cmd+d
@@ -608,7 +420,6 @@ ___qiTerm_______________________________________________________________________
 	Bind Key -> Preferences -> Key -> Plus (+) -> Run Coprocess -> Run Commane and Keyboard Shortcuts
 
 ___qmpv_________________________________________________________________________________________________________
-
 	brew uninstall ffmpeg
 	brew install mpv
 	#record video from youtube with mpv ---> mpv --record-file=video.mkv https://www.youtube.com/watch?v=…
@@ -630,69 +441,12 @@ ___qmpv_________________________________________________________________________
 		h no-osd seek  -1 exact
 
 ___Terminal__________________________________________________________________________________________________
-
 	Preferencec -> Window -> Restore text when reopening windows (Turn it off)
 
         e — edit a numeric value.
         E — edit a string value.
 
-___qcron_____________________________________________________________________________________________________
-
-	#make files
-        touch /root/check_nginx.sh && touch /root/check_and_renew_certs.sh && touch /var/log/check_nginx_script.log && touch /var/log/check_and_renew_certs.log
-        chmod 777 /root/check_nginx.sh && chmod 777 /root/check_and_renew_certs.sh
-	
- 	0 * * * * /root/check_nginx.sh >> /var/log/check_nginx_script.log
-        0 0 * * * /root/check_and_renew_certs.sh >> /var/log/check_and_renew_certs.log
- 	________________________________________________________________
-        #corntab scripts ---> check_nginx.sh
-        ________________________________________________________________
-        #!/bin/bash
-        # Check Nginx
-        if ! systemctl is-active --quiet nginx; then
-            echo "Nginx down. Restarting nginx..."
-            systemctl restart nginx
-            if systemctl is-active --quiet nginx; then
-                echo "Nginx successfully restarted."
-            else
-                echo "Failed to reload Nginx."
-            fi
-        else
-            echo "Nginx is working fine."
-        fi
-
-
-        ________________________________________________________________
-        #crontab scripts ---> check_and_renew_certs.sh
-        ________________________________________________________________
-        #!/bin/bash
-        # Function to check the number of days until the certificate expires
-        check_certificate() {
-            domain=$1
-            expiry_date=$(sudo certbot certificates --domain "$domain" 2>/dev/null | grep "Expiry Date:" | awk '{print $3, $4, $5}')
-            expiry_epoch=$(date -d "$expiry_date" +%s)
-            current_epoch=$(date +%s)
-            days_left=$(( (expiry_epoch - current_epoch) / 86400 ))
-
-            echo "Domen: $domain, days until expiration: $days_left"
-
-            if [ "$days_left" -lt 30 ]; then
-                echo "Certificat for domain $domain expires in more than 30 days. Starting the update..."
-                sudo certbot renew --cert-name "$domain"
-            else
-                echo "The certificate for the domain $domain expires in more than 30 days."
-            fi
-        }
-
-        # We get a list of all domains for which there are certificates
-        domains=$(sudo certbot certificates | grep "Domains:" | awk '{print $2}')
-
-        # We check every domain
-        for domain in $domains; do
-            check_certificate "$domain"
-        done
 ___qIPTABLES_________________________________________________________________________________________________
-
 	https://notessysadmin.com/minimum-rules-for-iptables
 	https://toster.ru/q/14066
 	http://farmal.in/2011/07/borba-s-ddos-atakami-sredstvami-iptables-i-sysctl/
@@ -770,7 +524,6 @@ ___qIPTABLES____________________________________________________________________
 		(https://unix.stackexchange.com/questions/139285/limit-max-connections-per-ip-address-and-new-connections-per-second-with-iptable)
 
   ___qDDOS______________________________________________________________________________________________________________
-
 	http://mycrimea.su/partners/web/access/ 
 
 	#Number of connection to 80 port ---> netstat -na | grep :80 | wc -l
@@ -849,60 +602,18 @@ ___qIPTABLES____________________________________________________________________
       		return 444;                                                                                                                                              
       	}
 
-___qTEST SERVER__________________________________________________________________________________________________________
-
-	#TEST(iftop) loading HDD realtime ("yum install sysstat") (https://pingvinoff.net/2009/01/06/komanda-iostat/)
-                iostat -xmd 1
-                iostat 5 3
-		#on mac os use ---> iostat -w1 disk0
-
-		# rrqm/s 	обобщенное количество запросов на чтение в секунду;
-		# wrqm/s 	обобщенное количество запросов на запись в секунду;
-		# r/s 	количество запросов на чтение в секунду;
-		# w/s 	количество запросов на запись в секунду;
-		# rMB/s 	количество МБ при чтении с диска в секунду;
-		# wMB/s 	количество МБ при записи на диск в секунду;
-		# avgrq-sz 	средний размер (в секторах) запросов к диску;
-		# avgqu-sz 	средний размер очереди запросов к диску;
-		# await 	среднее время (милисекунды) на обработку запросов к диску (включает в себя время, потраченное в очереди на обработку и время на обработку запроса);
-		# r_await 	среднее время (милисекунды) на обработку запросов чтения к диску (включает в себя время, потраченное в очереди на обработку и время на обработку запроса);
-		# w_await 	среднее время (милисекунды) на обработку запросов запи ик диску (включает в себя время, потраченное в очереди на обработку и время на обработку запроса);
-		# svctm 	среднее время (милисекунды) I/O запросов (не образайте внимания на неё — будет удалена в ближайшем будущем);
-		# %util 	% CPU, затраченный на передачу I/O запросов к диску («пропускная способность» диска);
-
-		# %util if it 90-100% hdd speed not enough
-
-	#REAL TIME Bandwich Usages (http://palexa.pp.ua/blog/linux/setevye-resheniya/utilita-iftop-kontrol-trafika-v-rezhime-realnogo-vremeni-online.html)
-                iftop -i [eth interface]
-                iftop -i eth0 -f "dst port domain" (DNS traffic)
-                iftop -i eth0 -f "icmp" (ICMP traff)
-                iftop -i eth0 -f "dst port http" (HTTP traff)
-                iftop -i eth0 -f "dst port 22" (Traff going to 22 port
-                iftop -i eth0 -f "dst 8.8.8.8" (Traff going to ip 8.8.8.8)
-
-	#Test RAID 	---> cat /proc/mdstat
-	#Test speed bandwidth traff speed ---> speedtest-cli-master
-	#Test free space ---> df -h
-	#Show CPU temperature ---> sensors
-	#Temperature HDD     ---> hddtemp /dev/sda
-
-
 ___qhistory_________________________________________________________________________________________________________________
-
 	#Show history ---> history
 	#Search in history ---> history | grep word
 	#Reply command number 3 ---> !number (!3)
 
-
 ___qps_________________________________________________________
-
 	#Show all process with comfortable view
 		ps -ejH
 	#Show all process
 		ps -elf
 
 ___qnetstat____SS analog netstat_______________________________
-
 	#Show all connection
                 netstat -tunup
         #Show all IP adress connection at 443 port
@@ -918,12 +629,10 @@ ___qnetstat____SS analog netstat_______________________________
                 lsof -i :25
 
 ___qss_________________________________________________________
-
 	#Show all connection
 		ss -tunup
 	
 ___qcp ________________________________________________________
-
 	#Copy folder 		    ---> cp -a /source/. /dest/
 	#Copy files (limited spee)d ---> rsync -avu --bwlimit=20000 --progress /source/files/ /destination/files/ (speed limit 20000kb)
 		#--chmod=Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r
@@ -939,7 +648,6 @@ ___qcp ________________________________________________________
 	#Copy file by using scp via proxy
 		scp -P2277 "/usr/bin/ssh -o ProxyCommand=nc -X 5 -x 127.0.0.1:9050 %h %p" ~/Downloads/file.txt admin@192.168.0.1:/home/admin/www/1main/qwe/1s/source/
 ___qtouch_______________________________________________________
-
 	#Change "Data Creation" and "Last Modified of file"
 		touch -a -m  -t 201001011212 temp.txt
 		# -a = accessed
@@ -948,7 +656,6 @@ ___qtouch_______________________________________________________
 
 
 ___qrsync_______________________________________________________
-
 	#https://www.linuxtechi.com/rsync-command-examples-linux/
 	#Transfer file from remout server to local server
 		rsync -v -e ssh remoteuser@X.X.X.X:/home/remoteuser/transfer/testfile.txt /home/localuser/
@@ -980,7 +687,6 @@ ___qrsync_______________________________________________________
 
 
 ___qExif___________________________________________________________
-
 	#Install ---> brew install exiftool
 	#Show all date for file ---> exiftool -time:all -a -G0:1 -s file.txt
 	#Change exif set CreateDate = CreationDate (So the main is set CreateDate, CreationDate and FileModifyDate the date you'l need)
@@ -994,7 +700,6 @@ ___qExif___________________________________________________________
 		exiftool -AllDates="2013:08:27 08:50:14" ~/Camera3/Camera/IMG_8458_1.mov
 
 ___qSMART__________________________________________________________
-
 	#install smart on centos ---> yum install smartmontools
 	#Show SMART HDD smart ---> smartctl -A /dev/sda 
 	#Show SMART HDD smart ---> smartctl -a disk3s2  
@@ -1006,7 +711,6 @@ ___qSMART__________________________________________________________
 
 
 ___qMySQL_________________________________________________________________________________________________________
-
 	Step 1: Install MariaDB (if not already installed)
 		sudo apt update
 		sudo apt install mariadb-server
@@ -1119,94 +823,7 @@ ___qMySQL_______________________________________________________________________
 	#use ---> ps aux | grep -i mysql
 	#and kill all mysql processes and start MariaDB again	
 
-
-___qWireGuard_______________________________________________________________________________________________________
-
-	#Install Centos7
-	#https://www.wireguard.com/install/#red-hat-enterprise-linux-7-centos-7-module-tools
-	#https://www.cyberciti.biz/faq/ubuntu-20-04-set-up-wireguard-vpn-server/
-
-	sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-	sudo curl -o /etc/yum.repos.d/jdoss-wireguard-epel-7.repo https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo
-	sudo yum install wireguard-dkms wireguard-tools
-
-
-	#install server then install desctop ubuntu (link install any ubuntu desctop - https://www.makeuseof.com/install-desktop-environment-gui-ubuntu-server/)
-		sudo apt install ubuntu-desktop
-
-
-	#Install wireguard (https://www.the-digital-life.com/wireguard-installation-and-configuration/)
-	# https://www.youtube.com/watch?v=bVKNSf1p1d0
-
-	1. Install WireGuard on Server and Client
-		sudo apt update && sudo apt install wireguard
-	2. Generate keys on Server and Client
-		wg genkey | tee privatekey | wg pubkey > publickey
-	3. Configure server (/etc/wireguard/wg0.conf)
-		----------------------------------------------------------------------------------------------------------------
-		[Interface]
-		PrivateKey=<server-private-key>
-		Address=<server-ip-address>/<subnet>
-		SaveConfig=true
-		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o <public-interface> -j MASQUERADE;
-		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o <public-interface> -j MASQUERADE;
-		ListenPort = 51820
-		----------------------------------------------------------------------------------------------------------------
-
-		---------------Example------------------------------------------------------------------------------------------
-		[Interface]
-		Address = 10.0.0.1/8
-		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE;
-		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE;
-		ListenPort = 51820
-		PrivateKey = cMe2MDoXJ8be09bYhd0azj/PPJEPGi1riHEpnYP8lVI=
-
-		[Peer]
-		PublicKey = J+RoaunI4NENqLrRMsc3ofz/cfW/KYa3etpRfFHhAmY=
-		AllowedIPs = 10.0.0.2/32
-		----------------------------------------------------------------------------------------------------------------
-	4. Start wg on Server
-			wg-quick up wg0
-		#or for Mac OS
-			wg-quick up ~/.config/wireguard/wg0.conf
-
-	5. Configure client (/etc/wireguard/wg0.conf)
-		----------------------------------------------------------------------------------------------------------------
-		[Interface]
-		PrivateKey = <client-private-key>
-		Address = <client-ip-address>/<subnet>
-
-		[Peer]
-		PublicKey = <server-public-key>
-		Endpoint = <server-public-ip-address>:51820
-		AllowedIPs = 0.0.0.0/0
-		----------------------------------------------------------------------------------------------------------------
-		[Interface]
-		Address = 10.0.0.2/8
-		PrivateKey = eIurbkxVvISdOuiGnr4fGkjofbvueoC/qeNGy45l61A=
-
-		[Peer]
-		PublicKey = fUDlm68ko0wxGBNA7cWj1V1sBoH5bQl8suCioYRVjzU=
-		AllowedIPs = 0.0.0.0/0
-		Endpoint = 94.130.176.20:51820
-		PersistentKeepalive = 30
-		----------------------------------------------------------------------------------------------------------------
-
-	6. Start wg on Client
-			wg-quick up wg0
-		#or for Mac OS
-			wg-quick down ~/.config/wireguard/wg0.conf
-	
-	7. Configure on server allow ip forward in cat /proc/sys/net/ipv4/ip_forward set "1"
-		sudo sysctl -w net.ipv4.ip_forward=1
-		sudo sysctl -p
-
-	---------------------------------------------------------------------------------------------------------------------
-	#Client for Mac - https://medium.com/@headquartershq/setting-up-wireguard-on-a-mac-8a121bfe9d86
-
-
 ___qVNC on remoute server__________________________________________________________________________________________
-
 	#install vnc server
 		https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
 	#make tunel for vnc viewer on local pc
@@ -1220,12 +837,10 @@ ___qVNC on remoute server_______________________________________________________
 
 
 ___qbase64__________________________________________________________________________________________________________
-
 	#encode to base64 ---> echo password | base64
 	#decode from base64 ---> echo 'password' | base64 --decode
 
 ___qsshfs___________________________________________________________________________________________________________
-
 	#Install sshfs on Centos 7
 		yum install epel-release
 		yum install fuse-sshfs
@@ -1233,7 +848,6 @@ ___qsshfs_______________________________________________________________________
 		sshfs foobar@remote.server:/home/foobar /mnt
 
 ___qnetwork____________________________NETWORK______________________________________________________________________
-
 	#Change qhostname - https://www.tecmint.com/set-change-hostname-in-centos-7/
 	#network (NFS - network file system)
 		watch 'netstat -na | grep -v 8080 | grep tcp | sort|grep EST'
@@ -1295,22 +909,18 @@ ___qnetwork____________________________NETWORK__________________________________
 	#or netstat -nap | grep -v '127.0.0.1' | grep tcp | grep -v nginx | grep -v ':80'jjjjjjj
 
 ___qtcpdump__________________________________________________________________________________________________________
-
 	#Whatch all dns querys with tcpdump
 	sudo tcpdump -i en0 port 53
 
 ___qwine_____________________________________________________________________________________________________________
-
 	#install
 	brew cask install wine-stable
 
 ___qbrew____________________________________________________________________________________________________________
-
 	#brew install from source example
 	brew install --build-from-source ffmpeg
 
 ___qwindows make usb with windows setup__________________________________________________
-
 	diskutil eraseDisk MS-DOS "WIN10" MBR /dev/disk2
 	diskutil eraseDisk MS-DOS "WIN10" GPT /dev/disk2
 	#or
@@ -1325,7 +935,6 @@ ___qwindows make usb with windows setup_________________________________________
 		sudo pmset -b disablesleep 0;sudo pmset -b sleep 5;
 
 ___qUbuntu_________________________________________________________________________________________
-
 	#Replace Alt and command (the interrupt command will replaced from Ctrl+c to Shift+Ctrl+c)
 
 	............................................................................................. vim ~/.Xmodmap
@@ -1361,99 +970,7 @@ ___qUbuntu______________________________________________________________________
 	sudo apt install i3
 	/usr/bin/i3-config-wizard
 
-___ qbash ____________________________________________________________________________________
-
-	#To watch / show function or other in bash 
-		type [function]
-		#Example ---> type youfunction
-		#Show all function decleared in bash ---> typeset -f
-
-	#Run browser vis ssh
-		export DISPLAY=:0	
-		firefox &
-
-	#Show execute process (trasert mode)
-			set -x
-		#Turn off
-			set +x
-
-	#Get only the file name without path
-		basename
-
-		"A && B" Run B if A succeeded
-		"A || B" Run B if A failed
-		"A &" Run A in background.
-
-	#To know wich command belong to wich packege (watch)
-		dpkg -S 'which watch'
-
-	#Return to previous directory/folder ---> cd -
-
-    	#Do 1+1
-       		ttt=$((1+1));echo $ttt
-
-    	#Current time/date Plus one hour
-       		echo -n $(($(date +'%l')+1));echo -n $(date +' :%m %p')' '; echo -n $(date +'%A %d');
-
-    	#How to check if a string contains a substring in Bash
-		string='My long string'
-		if [[ $string == *"My long"* ]]; then
-  		echo "It's there!"
-		fi
-    	#or
-		string='My long string';if test "$string" = *"My long"*;then echo "It's there!";fi
-
-    	#Check if a File or Directory Exists (https://linuxize.com/post/bash-check-if-file-exists/)
-		if [[ -f "$FILE" ]]; then
-     			echo "$FILE exist"
- 		fi
-
-    	#Replace (http://qaru.site/questions/4981/how-to-use-double-or-single-brackets-parentheses-curly-braces)
-		sed -i -e 's|old_text|new_text|g' path_to_file
-
-    	#Replace with echo
-		$ var="abcde"; echo ${var/de/12}
-		abc12
-
-	#Test redirect
-		curl -I http://converterlab.net/
-
-	#qbackground works
-	#run script in background ---> nohup command &>/dev/null &
-
-	#watch jobs in background ---> jobs
-	#Moving Background Processes to the Foreground ---> fg %number-job
-	#Moveng the processes to background ---> CTRL-Z
-	#Start pocesses in the foreground ---> bg 
-	#Kill background processes ---> watch number (jobs) then ---> kill %number-job 
-
-	#cursor navigation in terminal	
-		^A: go to the beginning of line
-		^E: go to the end of line
-		Alt-B: skip one word backward
-		Alt-F: skip one word forward
-		Esc-B: skip one word backward (on MacOS)
-		Esc-F: skip one word forward (on MacOS)
-		^U: delete to the beginning of line
-		^K: delete to the end of line
-		Alt-D: delete to the end of word
-		^J: like Enter
-		^H: delete symbol like backspace
-		^W: delete word
-		^U: delete line
-		^\: more powerfull than ^C
-
-
-	#qlogs all logs here (/etc/rsyslog.conf)
-	#log rotation here /etc/logrotate.d/*
-		https://www.digitalocean.com/community/tutorials/how-to-manage-logfiles-with-logrotate-on-ubuntu-16-04
-
-	#qtime 	     ---> date
-	#change time ---> date MMDDhhmmCCYY.ss 
-	(MM - month, hh - hours, mm - minutes, CCYY - year, ss - second)
-
 ___qsort_________________________________________________
-
 	sort -k2 -n -t '['
 
 	-k sort by column number
@@ -1461,18 +978,15 @@ ___qsort_________________________________________________
 	-t custom separator
 
 ___qcut__________________________________________________
-
 	cut -d ">" -f4
 	-d delete separator
 	-f the number of columb that shows after
 
 ___quniq_________________________________________________
-
 	uniq -c 
 	-c count uniq element
 
 ___qawk__________________________________________________
-
 	#about qawk - https://www.shellhacks.com/awk-print-column-change-field-separator-linux-bash/
 		$1 - take first field
 		$(NF) - take the last field
@@ -1488,12 +1002,10 @@ ___qawk__________________________________________________
 		awk -F ' ' '{print $(NF-1)}' 
 
 ___qln________qsymlink___________________________________
-
 	#Make symlinked ---> (sudo ln -s /symlink  /folder)
 	#Show the path for ln symbollind ---> readlink -f symlinkName
 
 ___qLocale____________________________________________________________________                         
-
 	https://www.shellhacks.com/linux-define-locale-language-settings/
 
 	#list of all locales
@@ -1509,99 +1021,7 @@ ___qLocale____________________________________________________________________
 		LANG=en_US.UTF-8
 		LC_ALL=en_US.UTF-8
 
-___qSCREEN____________________________________________________________________________________________________________
-
-	#config file /etc/screenrc
-
-	#run command at every windows (execute from screen with :[command]) ---> at "#" stuff "source ~/Documents/save/1/alias"
-        #execute command for window 0 ---> screen -S SessionName -p0 -X stuff "command"$(echo -ne '\015')
-		screen -S ses -p [0-4] -X stuff "ls -la"$(echo -ne '\015')
-		screen -S ses -X at "#" stuff "c"$(echo -ne '\015')
-
-	#Set password for screen session ---> ^A and type ":password"
-	#kill session 	 --->  screen -X -S [session # you want to kill] quit
-	#or 		 ---> ^D then "\"
-	#kill all screen ---> pkill screen
-
-	#connect to session ---> screen -x [screen session]
-
-	#New screen session ---> screen -S [new session name]
-
-	#Rename screen session ---> :sessionname [name]
-		#or ---> screen -S old_session_name -X sessionname new_session_name
-
-	#Move windows to another number ---> :number 7 (in move current windows to '7' and wndows '7' to current windows)
-
-	#Execute command to every windows ---> :at "#" stuff "ls -l^M"
-
-	#WATCH HELP ^A then ?	
-	#To split vertically 		  ---> ^A |.
-	#To split horizontally 		  ---> ^A S
-	#To unsplit 			  ---> ^A Q
-	#Resize				  :resize 20
-	#Split				  :split
-	#Unsplit current window		  :remove
-	#To switch from one to the other  ---> ^A then Tab (or ^I)
-	#To close the pane that has focus ---> ^A X
-	#Set windows title 		  ---> :title NewWindowsTitle
-	#Lock session			  ---> ^A x
-	#Kill window 			  ---> ^A k or (Ctrl-a :kill)
-	#monitor window for silence	  ---> C-a _
-	#redraw window 			  ---> C-a C-l
-	#enable logging in the screen session ---> C-a H 
-	#change to window by number or name ---> C-a ' <number or title>
-
-	http://www.softpanorama.org/Utilities/Screen/screenrc_examples.shtml
-	.................................................................................................START......vim ~/.screenrc
-	#terminfo * F9=\E[20~Q
-	#bindkey -k F9 next
-	#
-	#escape ``
-	escape ^Kk
-	#escape Ctrl+\
-	#escape ^\\
-
-	bind = resize =
-	bind + resize +2
-	bind - resize -2
-	bind _ resize max
-
-	bindkey -k k1 :"pwd"
-	bind '"\e[24~":"foobar"'
-	set password none
-
-
-	#screen -t net #rtorrent
-	#screen -t 1 #irssi
-	#screen -t 2
-	#screen -t 3
-	#screen -t 4
-	altscreen on
-	term screen-256color
-	bind ',' prev
-	bind '.' next
-	#
-	#change the hardstatus settings to give an window list at the bottom of the
-	#screen, with the time and date and with the current window highlighted
-	hardstatus alwayslastline
-	hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
-	.......................................................................................................................END.
-
-	............................................................................................................screenrc centos
-	escape ^Jj
-	bind = resize =
-	bind + resize +1
-	bind - resize -1
-	bind _ resize max
-
-	caption always "%{= kw}%-w%{= gW}%n %t%{-}%+w %-= activity - %Y-%m-%d %C:%s"
-	..............................................................................................................
-	#Next windows 		---> ^A then [n]. (works for n∈{0,1…9})
-	#Switch between terminals using list ---> ^A+a then " (useful when more than 10 terminals)
-	#Send ^A to the underlying terminal ^A then a.
-
 ___qarh (q7zip,tar.gz)_qtar__qzip______________________________________________________________________________________
-
 	#Unarhiv 7zip file with password (q7z,qz7)
 	7z -pPASSWORD x file.zip
 
@@ -1611,7 +1031,6 @@ ___qarh (q7zip,tar.gz)_qtar__qzip_______________________________________________
 
 	unrar e file.rar
 ___qDD________________________________________________________________________________________________________________
-
 	https://habr.com/ru/post/117050/
 
 	#Clone hdd from sda to sdb ---> sudo dd if=/dev/sda of=/dev/sdb bs=1M conv=noerror,sync status=progress
@@ -1623,163 +1042,7 @@ ___qDD__________________________________________________________________________
 
 	#Delete folder forever ---> for filename in /pathtofolder/*; do dd if=/dev/zero of="$filename" bs=1k count=200024; done
 
-___qGPG________________________________________________________________________________________________________________
-
-	Install on Mac ---> brew install gnupg
-	#Show where is folder with keys ---> gpg -K
-	#Crypt file with synhrone key ---> gpg -c file
-	#Delete secret key ---> gpg --delete-secret-keys key-ID
-
-	#Create main key file ---> gpg --gen-key
-	#Edit key ---> gpg2 --edit-key {recipient email address}  
-
-	#Encrypt
-		gpg -e -r USERNAME ~USERNAME/filename
-
-	#Decrypt
-		gpg -d -o ~/will_be_decrypted_file ~/crypt_filename
-
-	#Encrypt all files in folder (/Volumes/reserv/.save/1/)
-		temp_all_files=$(ls /Volumes/reserv/.save/1/) && gpg -r nonee@nonee.com --encrypt-files $temp_all_files && rm -f $temp_all_files
-
-	
-	1) Create gpg key
-		# gpg --gen-key
-		Please select what kind of key you want:
-		   Your selection? 1
-		RSA keys may be between 1024 and 4096 bits long.
-		What keysize do you want? (2048) 4096
-		Please specify how long the key should be valid.
-		Key is valid for? (0) 0
-		Is this correct? (y/N) y
-
-		GnuPG needs to construct a user ID to identify your key.
-
-		Real name: nonee
-		Email address: nonee@nonee.com
-		Comment:
-		You selected this USER-ID:
-		    "my_name (my-key-pair) <my_name@linoxide.com>"
-
-		You need a Passphrase to protect your secret key.
-
-		We need to generate a lot of random bytes.
-		.......+++++
-
-		pub   4096R/BAC361F1 2017-03-30
-		      Key fingerprint = 0397 AD65 6EE6 074A 2B95  EEF1 D2A7 4997 BAC3 61F1
-		uid   nonee (my-key-pair) <nonee@nonne.com>
-		sub   4096R/9742DE56 2017-03-30
-
-		    uid: Please take a note about the USER-ID mentioned in the result. We will use its value to do some operation.
-		    pub: It represents the public key. The key-id is BAC361F1. Yours will be different
-		    sub: It represents subkeys, goes along with the primary key. Commonly, it is used to encryption.
-
-
-	#now we cat encrypt file
-		gpg -r nonee@nonee.com --armor --encrypt '/Users/john/Downloads/file.txt'
-	#or
-		gpg -r nonee@nonee.com -a -e '/Users/john/Downloads/file.txt'
-
-
-	2) Make backup secret key ---> gpg -a --export-secret-key nonee > ~/secret_key
-
-	3) Generating a revocation certificate
-
-		$ gpg --output revoke_key.asc --gen-revoke BAC361F1
-		gpg -a --gen-revoke nonee > ~/revocation_cert.gpg
-
-	4) Export secret subkeys
-		gpg -a --export-secret-subkeys nonee > ~/secret_subs.gpg
-
-	5) import secret sub key
-		gpg --import secret_subs.gpg
-
-	6) import public key
-		gpg -a --export nonee > ~/public_key.gpg
-
-	7) Making an ASCII armored version of your public key
-		$ gpg --output armored_key.asc --export -a BAC361F1
-	or
-		gpg -a --export johenews > public_key.gpg
-
-
-	-----BEGIN PGP PUBLIC KEY BLOCK-----
-	
-	
-	-----END PGP PUBLIC KEY BLOCK-----
-	jjj
-	
-	-----BEGIN PGP PRIVATE KEY BLOCK-----
-	
-	
-	-----END PGP PRIVATE KEY BLOCK-----
-
-
-
-	#delete uid ---> gpg --edit-key <KEY_ID> ---> uid <ID> ---> deluid
-	#delete subkey ---> gpg --edit-key <KEY_ID> ---> uid <ID> ---> delkey
-	
-	##############  Moving/Copying your PGP Keys  ###############
-	Method 1 --- Copy All GnuPG Data--------------------
-
-	Your first choice is to copy all of your GnuPG data. This is a lot more data than just your key, but is still likely to be under 5MB. This method will copy all of your keys, everyone's key you have, and your entire trust database. It's ideal for backup, or for moving to a new computer. Simply copy all the contents of your GnuPG data directory, which would be as follows:
-
-	Windows: C:/Documents and Settings/username/application Data/GnuPG
-	Unix/Linux/Mac: ~/.gnupg
-	Where username is your windows username. Just simply copy the entire contents of that directory from one machine to the other and you will be set. There are many ways to move this data, which I won't cover. Some examples might be zipping the data up and copying it to a disk.
-
-	This will also work between different operating systems.
-
-	Method 2 --- Copy Just Your Keys -------------
-
-	However, you may not want to bring all that trust data and lots of keys with you. If you'd just like to copy your keys over, first export them (as usual, we assume gpg is in your path):
-
-
-	$ gpg --export-secret-keys -a keyid > my_private_key.asc
-	$ gpg --export -a keyid > my_public_key.asc
-	Where keyid is your PGP Key ID, such as A1E732BB. Take the the two files, securely copy them to the new machine (it is unadvisable to ftp them or use plain-text protocols because even thought your private key there is encrypted with your passphrase, your passphrase is still the weakest link, and you want to avoid exposure to your private key wherever possible). On the new machine:
-
-
-	$ gpg --import my_private_key.asc
-	$ gpg --import my_public_key.asc
-	Ensure that the Key ID printed is the correct one, and if so, then go ahead and add ultimate trust for it:
-
-
-	$ gpg --edit-key foo@bar.com
-	gpg (GnuPG) 1.4.1; Copyright (C) 2005 Free Software Foundation, Inc.
-	This program comes with ABSOLUTELY NO WARRANTY.
-	This is free software, and you are welcome to redistribute it
-	under certain conditions. See the file COPYING for details.
-
-	Secret key is available.
-
-	pub  1024D/BEEFF00D  created: 2005-09-05  expires: 2006-09-05  usage: CS  
-			     trust: unknown       validity: unknown 
-	sub  2048g/DEADBEEF  created: 2005-09-05  expires: 2006-09-05  usage: E   
-	[ unknown] (1). Foo Bar <foo@bar.com>
-
-	Command>
-	Type in the command "trust" and it will prompt you:
-
-
-	[Please decide how far you trust this user to correctly verify other users' keys
-	(by looking at passports, checking fingerprints from different sources, etc.)
-
-	  1 = I don't know or won't say
-	  2 = I do NOT trust
-	  3 = I trust marginally
-	  4 = I trust fully
-	  5 = I trust ultimately
-	  m = back to the main menu]
-	Because this is your key (and you should verify that it is your key by ensuring it's your name and email above), you should choose ultimate. You shouldn't trust anyone else's key ultimately. In fact, setting explicit trust like this is rarely done for keys other than your own. See the page on PGP trust for more info.
-
-	Anyway, after you type 5 and answer y to confirm, you'll be back at the command> prompt and you can type quit to exit.
-
-	That's it, you've now copied your key!
-
 ___qLibrefox__________________________________________________________________________________________________________
-
 	#https://github.com/intika/Librefox/#installation-instructions
 	#Install
 	#Windows
@@ -1806,7 +1069,6 @@ ___qLibrefox____________________________________________________________________
 
 
 ___qchrome________________________________________________________________________________________________________
-
 	- Installing Google Chrome on CentOS 7 by typing:
 	yum install google-chrome
 
@@ -1818,7 +1080,6 @@ ___qchrome______________________________________________________________________
 
 
 ___qsafari__________________________________________________________________________________________________________
-
 	- enable Safari development mode
 	Pull down the “Safari” menu and choose “Preferences”
 	Click on the “Advanced” tab
@@ -1826,7 +1087,6 @@ ___qsafari______________________________________________________________________
 
 
 __qlibrewolf________________________________________________________________________________________________________
-
 	- install librewolf
 	brew tap fxbrit/librewolf https://gitlab.com/fxbrit/homebrew-librewolf
 	brew install librewolf
