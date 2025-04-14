@@ -46,4 +46,7 @@ wsl --install
 Get-PSDrive -PSProvider FileSystem | Where-Object { $_.DisplayRoot -like '\\*' }
 
 #Whoami
- $(whoami -upn)
+$(whoami -upn)
+
+#Mount
+Get-PSDrive -PSProvider FileSystem
