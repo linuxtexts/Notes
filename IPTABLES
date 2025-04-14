@@ -1,0 +1,75 @@
+  https://notessysadmin.com/minimum-rules-for-iptables
+	https://toster.ru/q/14066
+	http://farmal.in/2011/07/borba-s-ddos-atakami-sredstvami-iptables-i-sysctl/
+
+	#show all rules!!!
+                iptables -n -L -v --line-numbers
+
+        #redirect (forwarding) port form 80 to 8080 on local PC
+                iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+	#INSTALL IPTABLES at NEW SERVER
+		1. Install IPTABLES
+			systemctl disable firewalld
+			systemctl mask firewalld
+			yum install iptables-services -y
+			systemctl enable iptables
+			systemctl enable ip6tables
+
+	........................................................................ /etc/sysconfig/iptables
+
+	*filter
+	:INPUT ACCEPT [0:0]
+	:FORWARD ACCEPT [0:0]
+	:OUTPUT ACCEPT [214:43782]
+	-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+	-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+	-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+	-A INPUT -i lo -j ACCEPT
+	-A INPUT -j REJECT --reject-with icmp-port-unreachable
+	COMMIT
+
+	........................................................................ /etc/sysconfig/ip6tables
+
+	*filter
+	:INPUT ACCEPT [0:0]
+	:FORWARD ACCEPT [0:0]
+	:OUTPUT ACCEPT [214:43782]
+	-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+	-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+	-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+	-A INPUT -i lo -j ACCEPT
+	-A INPUT -j REJECT --reject-with icmp6-adm-prohibited
+	COMMIT
+
+	............................................................................................. END
+
+		2. Save rules (it save rules to /etc/sysconfig/iptables) ---> service iptables save
+		3. Restart ---> service iptables restart
+
+	#Save iptable rules to file       ---> iptables-save > /etc/iptables.rules (">" resave to the file, ">>" save to the end of the file)
+	#Restore iptables rules from file ---> iptables-restore < /etc/iptables.rules
+	#show all rules and usage traffic ---> iptables -L or iptables -n -L -v --line-numbers
+
+	#DELETE RULE    ---> iptables -D INPUT 4
+	#close port 25  ---> iptables -A INPUT -p tcp --destination-port 25 -j DROP
+	#open port 25   ---> iptables -A INPUT -p tcp --destination-port 25 -j ACCEPT
+	#BLOCK IP       ---> iptables -I INPUT -s 115.214.193.224 -j DROP
+
+	#Drop traffic STATISTIC to zerio ---> iptables -Z INPUT
+	#Disable ip6 ipv6 service ip6tables stopchkconfig ip6tables off -->/etc/sysconfig/iptables systemctl stop firewalld
+	# Default iptable rules
+		iptables -P INPUT DROP
+		iptables -P FORWARD DROP
+		iptables -P OUTPUT ACCEPT
+
+	# Allow input connection from localhost       ---> iptables -A INPUT -i lo -j ACCEPT
+	# Allow already installed inbound connections ---> iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+	# HTTP port ---> iptables -A INPUT -p TCP --dport 80 -j ACCEPT
+
+	# Show IPtables REAL TIME ---> watch -n 2 -d iptables -nv20L
+
+	# Set limit max connection from one IP adress (max 100 connection from IP)
+		iptables -t filter -I INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 100 --connlimit-mask 32 -j DROP
+		(https://unix.stackexchange.com/questions/139285/limit-max-connections-per-ip-address-and-new-connections-per-second-with-iptable)
