@@ -25,9 +25,6 @@ ___qps_________________________________________________________
 		ps -ejH
 	#Show all process
 		ps -elf
-___qss_________________________________________________________
-	#Show all connection
-		ss -tunup
 	
 ___qcp ________________________________________________________
 	#Copy folder 		    ---> cp -a /source/. /dest/
@@ -78,14 +75,6 @@ ___qsshfs_______________________________________________________________________
 ___qtcpdump__________________________________________________________________________________________________________
 	#Whatch all dns querys with tcpdump
 	sudo tcpdump -i en0 port 53
-
-___qwine_____________________________________________________________________________________________________________
-	#install
-	brew cask install wine-stable
-
-___qbrew____________________________________________________________________________________________________________
-	#brew install from source example
-	brew install --build-from-source ffmpeg
 
 ___qwindows make usb with windows setup__________________________________________________
 	diskutil eraseDisk MS-DOS "WIN10" MBR /dev/disk2
