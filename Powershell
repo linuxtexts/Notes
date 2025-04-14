@@ -20,3 +20,9 @@ $ExecutionContext.SessionState.Scripts.Clear()
 #Show all command fur module
 Get-Command -Module Microsoft.Graph.Users
 
+#Show my account
+$userId = (Get-MgContext).Account
+
+#My user ID in Intune
+$user = Get-MgUser -UserId ((Get-MgContext).Account)
+$user.Id
