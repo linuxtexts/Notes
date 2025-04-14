@@ -1,0 +1,53 @@
+  #make files
+        touch /root/check_nginx.sh && touch /root/check_and_renew_certs.sh && touch /var/log/check_nginx_script.log && touch /var/log/check_and_renew_certs.log
+        chmod 777 /root/check_nginx.sh && chmod 777 /root/check_and_renew_certs.sh
+	
+ 	0 * * * * /root/check_nginx.sh >> /var/log/check_nginx_script.log
+        0 0 * * * /root/check_and_renew_certs.sh >> /var/log/check_and_renew_certs.log
+ 	________________________________________________________________
+        #corntab scripts ---> check_nginx.sh
+        ________________________________________________________________
+        #!/bin/bash
+        # Check Nginx
+        if ! systemctl is-active --quiet nginx; then
+            echo "Nginx down. Restarting nginx..."
+            systemctl restart nginx
+            if systemctl is-active --quiet nginx; then
+                echo "Nginx successfully restarted."
+            else
+                echo "Failed to reload Nginx."
+            fi
+        else
+            echo "Nginx is working fine."
+        fi
+
+
+        ________________________________________________________________
+        #crontab scripts ---> check_and_renew_certs.sh
+        ________________________________________________________________
+        #!/bin/bash
+        # Function to check the number of days until the certificate expires
+        check_certificate() {
+            domain=$1
+            expiry_date=$(sudo certbot certificates --domain "$domain" 2>/dev/null | grep "Expiry Date:" | awk '{print $3, $4, $5}')
+            expiry_epoch=$(date -d "$expiry_date" +%s)
+            current_epoch=$(date +%s)
+            days_left=$(( (expiry_epoch - current_epoch) / 86400 ))
+
+            echo "Domen: $domain, days until expiration: $days_left"
+
+            if [ "$days_left" -lt 30 ]; then
+                echo "Certificat for domain $domain expires in more than 30 days. Starting the update..."
+                sudo certbot renew --cert-name "$domain"
+            else
+                echo "The certificate for the domain $domain expires in more than 30 days."
+            fi
+        }
+
+        # We get a list of all domains for which there are certificates
+        domains=$(sudo certbot certificates | grep "Domains:" | awk '{print $2}')
+
+        # We check every domain
+        for domain in $domains; do
+            check_certificate "$domain"
+        done
