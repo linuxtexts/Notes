@@ -1,0 +1,46 @@
+	Set limin to php.ini to upload big data file
+		upload_max_filesize = 2000M
+		post_max_size = 2000M;
+
+	#Install php 5.6
+		#Add repo
+			yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+			yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+		#Configure php 5.6
+			yum-config-manager --enable remi-php56	
+		#Then install
+			yum install php php-mcrypt php-cli php-gd php-curl php-mysql php-ldap php-zip php-fileinfo
+
+	#Downgrade PHP form 7.3 to 5.4.16
+		#https://www.tecmint.com/install-php-5-6-on-centos-7/
+		#https://www.linuxtechi.com/install-php-7-centos-7-rhel-7-server/
+
+		#Remove php
+			yum remove "php-*" -y
+
+		#Disable the 7.3version and enable the 54 version, so watch "remi-php" you has
+			rpm -qa | grep php
+			
+		#if you have other "remi-php" more then "remi-php5.4" you must disable it
+			yum-config-manager --disable remi-php55 &&\
+			yum-config-manager --disable remi-php56 &&\
+			yum-config-manager --disable remi-php72 &&\
+			yum-config-manager --disable remi-php73
+
+		#then enable remi-php54 and install it
+			yum-config-manager --enable remi-php54
+			yum install php php-gd php-mbstring php-mysql php-curl php-mcrypt -y
+
+	#Update PHP to 7.3
+		#Remove php
+			yum remove "php-*" -y
+
+		#Watch "remi-php"
+			rpm -qa | grep php
+		#Enable remi-php73
+			yum-config-manager --enable remi-php73
+		#Install
+			yum install php php-gd php-mbstring php-mysql php-curl php-mcrypt php-xml php-pecl-zip
+
+		!!!Don't forget configure Php-FPM after installation PHP
+		!!!Use fix_mysql.inc.php to repeir php without pdo
