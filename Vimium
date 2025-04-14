@@ -1,0 +1,11 @@
+	Vimium Options
+	Insert your preferred key mappings here.
+	map ! visitPreviousTab
+	map b Vomnibar.activateTabSelection
+	map 1 visitPreviousTab
+	map g4 lastTab
+	map h goBack
+	map l goForward
+	map ^T restoreTab
+	map q previousTab
+	map w nextTab
