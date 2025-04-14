@@ -1,0 +1,89 @@
+	#Install nginx with secure_link module
+		apt install build-essential libssl-dev libpcre3 libpcre3-dev zlib1g-dev
+		apt install build-essential libpcre3 libpcre3-dev zlib1g-dev libssl-dev
+
+		cd /usr/local/src
+		sudo wget http://nginx.org/download/nginx-1.26.0.tar.gz
+		sudo tar -zxvf nginx-1.26.0.tar.gz
+		cd nginx-1.26.0
+
+
+		./configure --with-http_secure_link_module --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx
+		make
+		make install
+
+		#check module
+			nginx -V 2>&1 | grep secure_link
+
+		#delete all version of nginx
+			apt remove --purge nginx nginx-common nginx-full -y
+	
+	#Add nginx to systemctrl
+		vim /etc/systemd/system/nginx.service
+		-----------------------------------
+		[Unit]
+		Description=The NGINX HTTP and reverse proxy server
+		After=network.target
+
+		[Service]
+		Type=simple
+		User=nginx
+		Group=nginx
+		ExecStart=/usr/sbin/nginx
+		ExecReload=/usr/sbin/nginx -s reload
+		ExecStop=/usr/sbin/nginx -s stop
+		#PIDFile=/var/run/nginx.pid
+		PIDFile=/run/nginx.pid
+
+		[Install]
+		WantedBy=multi-user.target
+
+		-----------------------------------
+
+		systemctl daemon-reload
+		systemctl enable nginx
+		systemctl start nginx
+		systemctl status nginx
+
+
+	#qadd user "ugninx"
+		useradd -r -d /var/cache/nginx -s /sbin/nologin nginx
+
+	#Remove nginx from server
+		systemctl stop nginx
+		systemctl disable nginx
+		apt remove nginx nginx-common
+		apt purge nginx nginx-common
+		apt autoremove
+		rm -rf /etc/nginx
+		rm -rf /var/log/nginx
+	
+	
+	#Shows error ---> nginx -t
+	#Comfortably find the errors ---> nginx -T
+	#Show all ip adress of sites ---> find /etc/nginx/vhosts/... -name '*.conf' | xargs grep -e 'listen' --color
+	#To set default site by ip You should add to config nginx site file
+		....
+		listen 80 default_server;
+		listen [::]:80 default_server;
+		.....
+
+
+	#If you use upload set limit at
+		location ~ .php$ {
+			.....
+			proxy_connect_timeout 1800;
+			proxy_send_timeout 1800;
+			proxy_read_timeout 1800;
+			send_timeout 1800;
+			fastcgi_read_timeout 1800;
+			.....
+		}
+
+	#if you need set in php.ini
+		max_execution_time = 600
+		max_input_time = 600
+		post_max_size = 3000M
+		pload_max_filesize = 3000M
+
+j
