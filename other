@@ -1,63 +1,7 @@
 https://habr.com/ru/articles/347106/
 https://habr.com/ru/articles/658879/ - vds
 
-#Check certbot certificates script__one time per Day________________________________________________________________________
-	# Log file
-	LOG_FILE="/var/log/certbot_check.log"
-	
-	# Current date
-	DATE=$(date +"%Y-%m-%d %H:%M:%S")
-	
-	# Get the list of certificates and their expiration dates
-	CERTS=$(certbot certificates 2>/dev/null)
-	
-	# Set the threshold to 30 days
-	LIMIT=30
-	
-	# Flag for updating certificates
-	UPDATE_NEEDED=false
-	
-	# Process each certificate
-	echo "----- Checking certificates: $DATE -----" >> "$LOG_FILE"
-	
-	while read -r line; do
-	    # Find lines containing "Expiry Date"
-	    if [[ $line == *"Expiry Date:"* ]]; then
-	        DOMAIN=$(echo "$line" | sed -n 's/.*Domains: \(.*\)/\1/p')
-	        EXPIRY_DATE=$(echo "$line" | sed -n 's/.*Expiry Date: \(.*\)/\1/p')
-	
-	        # Convert the certificate's expiration date to UNIX timestamp
-	        EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE" +%s)
-	        CURRENT_TIMESTAMP=$(date +%s)
-	
-	        # Calculate the number of days left until the certificate expires
-	        DAYS_LEFT=$(( (EXPIRY_TIMESTAMP - CURRENT_TIMESTAMP) / 86400 ))
-	
-	        # Log certificate information
-	        echo "Certificate for domain: $DOMAIN, Days left: $DAYS_LEFT" >> "$LOG_FILE"
-	
-	        # Check if the certificate expires in less than 30 days
-	        if [[ $DAYS_LEFT -le $LIMIT ]]; then
-	            echo "Certificate for domain $DOMAIN needs renewal (days left: $DAYS_LEFT)." >> "$LOG_FILE"
-	            UPDATE_NEEDED=true
-	        fi
-	    fi
-	done <<< "$CERTS"
-	
-	# Check if certificates need to be updated
-	if [[ $UPDATE_NEEDED = true ]]; then
-	    echo "Certificate renewal is required." >> "$LOG_FILE"
-	    /path/to/update_certificates.sh
-	else
-	    echo "All certificates are valid." >> "$LOG_FILE"
-	fi
-	
-	echo "----- End of check -----" >> "$LOG_FILE"
-
-	crontab -e
-	0 0 * * * /path/to/cert_check.sh
- 
-___qiTerm_______________________________________________________________________________________________________
+ ___qiTerm_______________________________________________________________________________________________________
 	Preferences -> Advanced -> search "restor" and turnoff all
 	split pane vertical ---> cmd+d
 	split pane horisontal ---> Shift+cmd+d
@@ -123,38 +67,6 @@ ___qtouch_______________________________________________________
 		# -m = modified
 		# -t  = timestamp - use [[CC]YY]MMDDhhmm[.ss] time format
 
-
-___qrsync_______________________________________________________
-	#https://www.linuxtechi.com/rsync-command-examples-linux/
-	#Transfer file from remout server to local server
-		rsync -v -e ssh remoteuser@X.X.X.X:/home/remoteuser/transfer/testfile.txt /home/localuser/
-		rsync -avu --bwlimit=5000 --chmod=Fu=rwx,Fg=r,Fo=r --progress /from_folder/ ~/destination_folder/
-	#rsync for resume download use "--partial"
-		rsync -azvvP /home/path/folder1/ /home/path/folder2
-
-	#rsync for cloud storage
-		rsync -azvvpu --delete -e "ssh -p443" ~/.A8fhd4ksDk root@ip-address:/home/
-		#--ignore-existing - copy only new file
-
-	#rsync exclude directorie
-		rsync -avzP --bwlimit=5000 --exclude {'file1.txt','dir1/*','dir2'} /source-directory /destination-directory
-		#example
-			rsync -avzP --exclude {'/.save/', '/save/'} ~/ /Volumes/hdd/john/
-		#rsync without recurcive ---> -d
-
-		#example exclude ONE directorie
-			rsync -avzP --exclude '/save/' ~/ /Volumes/hdd/john/
-
-	#rsync transfer file to server via socks5 proxy
-		rsync --progress -avrz -e 'ssh -p2244 -o ProxyCommand="nc -X 5 -x 127.0.0.1:5060 %h %p"' /Users/john/Downloads/test.mp4  admin@remoute-server:/name-folder/filename
-
-	___qhosts__/etc/hosts_______________________________________________
-	127.0.0.1 analytics.google.com
-	127.0.0.1 www.google-analytics.com
-	127.0.0.1 google-analytics.com
-	127.0.0.1 ssl.google-analytics.com
-
-
 ___qExif___________________________________________________________
 	#Install ---> brew install exiftool
 	#Show all date for file ---> exiftool -time:all -a -G0:1 -s file.txt
@@ -178,120 +90,6 @@ ___qSMART__________________________________________________________
 	#insatall smart on macos ---> brew install smartmontools
 	#run -> smartctl -a disk0 (and watch "Percentage Used" if it more than 30% soom mac will die)
 
-
-___qMySQL_________________________________________________________________________________________________________
-	Step 1: Install MariaDB (if not already installed)
-		sudo apt update
-		sudo apt install mariadb-server
-	 	sudo systemctl start mariadb
-		sudo systemctl enable mariadb
-  
- 	Step 2: Secure the MariaDB installation
- 		sudo mysql_secure_installation
-   
-   	Step 3: Log in to the MariaDB shell
-    		sudo mysql -u root -p
-      
-      	Step 4: Create a database
-		CREATE DATABASE your_database_name;
-  	Step 5: Create a user
-   		CREATE USER 'your_user_name'@'localhost' IDENTIFIED BY 'your_password';
-     	Step 6: Grant privileges
-      
-      		GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_user_name'@'localhost';
-		FLUSH PRIVILEGES;
-  		EXIT;
-    
-    	Step 8: Verify the user and database
-     		mysql -u your_user_name -p
-       		SHOW DATABASES;
-	 
-  	Step 9: Import the Database
-   		mysql -u your_user_name -p your_database_name < /path/to/your_file.sql
-			
-
-	#Connect to BD and make Query
-		mysql -u username -puserpass dbname -e "UPDATE mytable SET mycolumn = 'myvalue' WHERE id='myid'";
-		mysql --user=username --password=passwordtext basename
-		mysql --user=username --password=passwordtext basename -e "SELECT * FROM main WHERE id='1'";
-		mysql --user=username --password=passwordtext basename -e "SELECT * FROM user WHERE password='aaaaabbbbb'";
-		
-	#Show tables of database
-		#Enter in mysql
-		use name_of_database;
-		show tables;
-
-	#Show columns from [table name];
-		show columns from table;
-	
-	select post_text from posts where post_text like "%http:%" and id<100;
-	update posts SET post_text = REPLACE(post_text, 'http://name', 'https://name') WHERE post_text LIKE '%http://name%';
-	
-	#Replace
-	UPDATE main SET other_cont_en = REPLACE(other_cont_en, ' width="800" height="600"', '') WHERE INSTR(other_cont_en, '%width="800"%') > 0;
-	SELECT * FROM `main` WHERE `other_cont_en` like '% width="800" height="600"%'
-
-	#Make dump-file(backup base) with base MySQL  
-		mysqldump --single-transaction -u user -p DBNAME > backup.sql
-
-	#Recover from dump-file to MySQL
-		mysql basename -u username -p < base.sql
-	-------------------------------------------------------------------------------
-	/usr/bin/mysqladmin -u root password 'new-password'
-	mysql -u root -p
-	mysql> CREATE DATABASE name_bae;
-	mysqladmin -u root -p'oldpassword' password newpass
-	-------------------------------------------------------------------------------
-	#Install qMariaDB
-		yum remove mysql mysql-server
-		mv /var/lib/mysql /var/lib/mysql_old_backup
-		yum install mariadb-server -y
-		yum install mariadb -y
-		chmod -R 777 /var/lib/mysql/
-		systemctl enable mariadb.service
-		service mariadb start
-		/usr/bin/mysql_secure_installation
-
-		#Enter current password for root (enter for none): Enter
-		#Set root password? [Y/n]: Y
-		#New password: <your-password>
-		#Re-enter new password: <your-password>
-		#Remove anonymous users? [Y/n]: Y
-		#Disallow root login remotely? [Y/n]: Y
-		#Remove test database and access to it? [Y/n]: Y
-		#Reload privilege tables now? [Y/n]: Y
-
-	-------------------------------------------------------------------------------
-	#Reset password for MySQL
-		service mariadb stop
-		mysqld_safe --skip-grant-tables &
-		mysql -u root
-		mysql> use mysql;
-		mysql> update user set password=PASSWORD("NEW-ROOT-PASSWORD") where User='root';
-		mysql> flush privileges;
-		mysql> quit
-		service mariadb start
-		mysql -u root -p (check)
-	-------------------------------------------------------------------------------
-	#Create user and database
-		mysql -u root -p
-		GRANT ALL PRIVILEGES ON *.* TO 'newuser'@'localhost' IDENTIFIED BY '7dfg27fsd';
-	#then login as new user ---> mysql -u newuser -p
-	#and create database for user ---> CREATE DATABASE `newuser`;
-	-------------------------------------------------------------------------------
-	#check and fix mysql errors and problem ---> mysql_upgrade -uroot -p
-	#chemk if service mariadb active ---> systemctl is-active mariadb
-
-	#drop database
-		mysql -u root -p
-		show databases;
-		drop database name; (if is there "-" use ---> drop database `name`;)
-
-
-	#ERROR mariadb cant start after Reset password for MySQL
-	#use ---> ps aux | grep -i mysql
-	#and kill all mysql processes and start MariaDB again	
-
 ___qVNC on remoute server__________________________________________________________________________________________
 	#install vnc server
 		https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
@@ -303,7 +101,6 @@ ___qVNC on remoute server_______________________________________________________
 
 	#start VNC on localhost
 		vncserver -localhost
-
 
 ___qbase64__________________________________________________________________________________________________________
 	#encode to base64 ---> echo password | base64
