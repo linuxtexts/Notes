@@ -10,6 +10,9 @@ Get-MgDeviceManagementManagedDevice
 #Get Devices in this tenant
 Get-MgDevice
 
+#Find konkreter Gerät bei DisplayName
+ Get-MgDevice -All | Where-Object { $_.DisplayName -like '*5CD2079ZRG*' }
+
 #alternativ with filter
 Get-MgDevice | Select-Object DisplayName, Id, DeviceId, DeviceOwnership, DeviceTrustType
 
