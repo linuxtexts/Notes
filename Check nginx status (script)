@@ -1,0 +1,13 @@
+  #!/bin/bash
+	#Check nginx status
+	if ! systemctl is-active --quiet nginx; then
+	    echo "Nginx don't work. Reboot..."
+	    systemctl restart nginx
+	    if systemctl is-active --quiet nginx; then
+	        echo "Nginx rebooted."
+	    else
+	        echo "Problem with Nginx."
+	    fi
+	else
+	    echo "Nginx working."
+	fi
