@@ -1,0 +1,59 @@
+  #Change qhostname - https://www.tecmint.com/set-change-hostname-in-centos-7/
+	#network (NFS - network file system)
+		watch 'netstat -na | grep -v 8080 | grep tcp | sort|grep EST'
+
+	#check all connection status
+		netstat -tan | awk '{print $6}' | sort | uniq -c
+  
+	#Show all open ports
+		netstat -nap | grep LISTEN
+		or
+		netstat -lntup
+  
+	#Show route table in mac os
+		netstat -rn
+
+	#Chenge default route
+		route delete default
+		route add default 192.168.0.1
+	or
+		route change default -interface $INTF
+		route change 192.168.0.0/16 -interface $INTF
+
+	#Configure Network config (Red Hat)
+		#https://www.cyberciti.biz/faq/howto-setting-rhel7-centos-7-static-ip-configuration/
+		/etc/sysconfig/network-scripts/ifcfg-eth0
+		IPADDR=192.168.1.200
+		NETMASK=255.255.255.0
+		GATEWAY=192.168.1.1
+		DNS1=1.0.0.1
+		#or use ---> nmtui
+
+	#DISABLE ipv6 in Red Hat
+		sysctl -w net.ipv6.conf.all.disable_ipv6=1
+		sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+	#Disable ipv6 (Ubuntu)
+		sudo sh -c 'echo 1 > /proc/sys/net/ipv6/conf/eth0/disable_ipv6'
+
+	#Disable ipv6 (Android)
+		echo 0 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
+		echo 1 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+
+	#Conect WI-FI via terminal ---> http://rus-linux.net/MyLDP/consol/wifi-from-command-line.html
+	
+	#Set DNS 		   ---> /etc/resolv.conf
+
+		netstat -nlpt (t - TCP pocket, p - show program using connection, l - Show only listening sockets)
+
+	#REAL TIME network monitor ---> watch lsof -i
+	#REAL TIME network monitor ---> watch 'netstat -nap | grep -v 8080 | grep tcp | sort'
+
+	#Show all route        ---> netstat -rn
+	#Show all route        ---> route -n
+	#Show default geatways ---> ip route show 
+
+	#Show specifications of WI-FI, ethernet -->ethtool -i [wlan0]
+
+	#To show what SERVICE using internet -->lsof -P -i -n | cut -f 1 -d " " | uniq
+	#or netstat -nap | grep -v '127.0.0.1' | grep tcp | grep -v nginx | grep -v ':80'
