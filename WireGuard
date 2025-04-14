@@ -1,0 +1,81 @@
+  #Install Centos7
+	#https://www.wireguard.com/install/#red-hat-enterprise-linux-7-centos-7-module-tools
+	#https://www.cyberciti.biz/faq/ubuntu-20-04-set-up-wireguard-vpn-server/
+
+	sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+	sudo curl -o /etc/yum.repos.d/jdoss-wireguard-epel-7.repo https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo
+	sudo yum install wireguard-dkms wireguard-tools
+
+
+	#install server then install desctop ubuntu (link install any ubuntu desctop - https://www.makeuseof.com/install-desktop-environment-gui-ubuntu-server/)
+		sudo apt install ubuntu-desktop
+
+
+	#Install wireguard (https://www.the-digital-life.com/wireguard-installation-and-configuration/)
+	# https://www.youtube.com/watch?v=bVKNSf1p1d0
+
+	1. Install WireGuard on Server and Client
+		sudo apt update && sudo apt install wireguard
+	2. Generate keys on Server and Client
+		wg genkey | tee privatekey | wg pubkey > publickey
+	3. Configure server (/etc/wireguard/wg0.conf)
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		PrivateKey=<server-private-key>
+		Address=<server-ip-address>/<subnet>
+		SaveConfig=true
+		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o <public-interface> -j MASQUERADE;
+		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o <public-interface> -j MASQUERADE;
+		ListenPort = 51820
+		----------------------------------------------------------------------------------------------------------------
+
+		---------------Example------------------------------------------------------------------------------------------
+		[Interface]
+		Address = 10.0.0.1/8
+		PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE;
+		PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE;
+		ListenPort = 51820
+		PrivateKey = cMe2MDoXJ8be09bYhd0azj/PPJEPGi1riHEpnYP8lVI=
+
+		[Peer]
+		PublicKey = J+RoaunI4NENqLrRMsc3ofz/cfW/KYa3etpRfFHhAmY=
+		AllowedIPs = 10.0.0.2/32
+		----------------------------------------------------------------------------------------------------------------
+	4. Start wg on Server
+			wg-quick up wg0
+		#or for Mac OS
+			wg-quick up ~/.config/wireguard/wg0.conf
+
+	5. Configure client (/etc/wireguard/wg0.conf)
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		PrivateKey = <client-private-key>
+		Address = <client-ip-address>/<subnet>
+
+		[Peer]
+		PublicKey = <server-public-key>
+		Endpoint = <server-public-ip-address>:51820
+		AllowedIPs = 0.0.0.0/0
+		----------------------------------------------------------------------------------------------------------------
+		[Interface]
+		Address = 10.0.0.2/8
+		PrivateKey = eIurbkxVvISdOuiGnr4fGkjofbvueoC/qeNGy45l61A=
+
+		[Peer]
+		PublicKey = fUDlm68ko0wxGBNA7cWj1V1sBoH5bQl8suCioYRVjzU=
+		AllowedIPs = 0.0.0.0/0
+		Endpoint = 94.130.176.20:51820
+		PersistentKeepalive = 30
+		----------------------------------------------------------------------------------------------------------------
+
+	6. Start wg on Client
+			wg-quick up wg0
+		#or for Mac OS
+			wg-quick down ~/.config/wireguard/wg0.conf
+	
+	7. Configure on server allow ip forward in cat /proc/sys/net/ipv4/ip_forward set "1"
+		sudo sysctl -w net.ipv4.ip_forward=1
+		sudo sysctl -p
+
+	---------------------------------------------------------------------------------------------------------------------
+	#Client for Mac - https://medium.com/@headquartershq/setting-up-wireguard-on-a-mac-8a121bfe9d86
