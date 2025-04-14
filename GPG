@@ -1,0 +1,152 @@
+  №Install on Mac ---> brew install gnupg
+	#Show where is folder with keys ---> gpg -K
+	#Crypt file with synhrone key ---> gpg -c file
+	#Delete secret key ---> gpg --delete-secret-keys key-ID
+
+	#Create main key file ---> gpg --gen-key
+	#Edit key ---> gpg2 --edit-key {recipient email address}  
+
+	#Encrypt
+		gpg -e -r USERNAME ~USERNAME/filename
+
+	#Decrypt
+		gpg -d -o ~/will_be_decrypted_file ~/crypt_filename
+
+	#Encrypt all files in folder (/Volumes/reserv/.save/1/)
+		temp_all_files=$(ls /Volumes/reserv/.save/1/) && gpg -r nonee@nonee.com --encrypt-files $temp_all_files && rm -f $temp_all_files
+
+	
+	1) Create gpg key
+		# gpg --gen-key
+		Please select what kind of key you want:
+		   Your selection? 1
+		RSA keys may be between 1024 and 4096 bits long.
+		What keysize do you want? (2048) 4096
+		Please specify how long the key should be valid.
+		Key is valid for? (0) 0
+		Is this correct? (y/N) y
+
+		GnuPG needs to construct a user ID to identify your key.
+
+		Real name: nonee
+		Email address: nonee@nonee.com
+		Comment:
+		You selected this USER-ID:
+		    "my_name (my-key-pair) <my_name@linoxide.com>"
+
+		You need a Passphrase to protect your secret key.
+
+		We need to generate a lot of random bytes.
+		.......+++++
+
+		pub   4096R/BAC361F1 2017-03-30
+		      Key fingerprint = 0397 AD65 6EE6 074A 2B95  EEF1 D2A7 4997 BAC3 61F1
+		uid   nonee (my-key-pair) <nonee@nonne.com>
+		sub   4096R/9742DE56 2017-03-30
+
+		    uid: Please take a note about the USER-ID mentioned in the result. We will use its value to do some operation.
+		    pub: It represents the public key. The key-id is BAC361F1. Yours will be different
+		    sub: It represents subkeys, goes along with the primary key. Commonly, it is used to encryption.
+
+
+	#now we cat encrypt file
+		gpg -r nonee@nonee.com --armor --encrypt '/Users/john/Downloads/file.txt'
+	#or
+		gpg -r nonee@nonee.com -a -e '/Users/john/Downloads/file.txt'
+
+
+	2) Make backup secret key ---> gpg -a --export-secret-key nonee > ~/secret_key
+
+	3) Generating a revocation certificate
+
+		$ gpg --output revoke_key.asc --gen-revoke BAC361F1
+		gpg -a --gen-revoke nonee > ~/revocation_cert.gpg
+
+	4) Export secret subkeys
+		gpg -a --export-secret-subkeys nonee > ~/secret_subs.gpg
+
+	5) import secret sub key
+		gpg --import secret_subs.gpg
+
+	6) import public key
+		gpg -a --export nonee > ~/public_key.gpg
+
+	7) Making an ASCII armored version of your public key
+		$ gpg --output armored_key.asc --export -a BAC361F1
+	or
+		gpg -a --export johenews > public_key.gpg
+
+
+	-----BEGIN PGP PUBLIC KEY BLOCK-----
+	
+	
+	-----END PGP PUBLIC KEY BLOCK-----
+	jjj
+	
+	-----BEGIN PGP PRIVATE KEY BLOCK-----
+	
+	
+	-----END PGP PRIVATE KEY BLOCK-----
+
+
+
+	#delete uid ---> gpg --edit-key <KEY_ID> ---> uid <ID> ---> deluid
+	#delete subkey ---> gpg --edit-key <KEY_ID> ---> uid <ID> ---> delkey
+	
+	##############  Moving/Copying your PGP Keys  ###############
+	Method 1 --- Copy All GnuPG Data--------------------
+
+	Your first choice is to copy all of your GnuPG data. This is a lot more data than just your key, but is still likely to be under 5MB. This method will copy all of your keys, everyone's key you have, and your entire trust database. It's ideal for backup, or for moving to a new computer. Simply copy all the contents of your GnuPG data directory, which would be as follows:
+
+	Windows: C:/Documents and Settings/username/application Data/GnuPG
+	Unix/Linux/Mac: ~/.gnupg
+	Where username is your windows username. Just simply copy the entire contents of that directory from one machine to the other and you will be set. There are many ways to move this data, which I won't cover. Some examples might be zipping the data up and copying it to a disk.
+
+	This will also work between different operating systems.
+
+	Method 2 --- Copy Just Your Keys -------------
+
+	However, you may not want to bring all that trust data and lots of keys with you. If you'd just like to copy your keys over, first export them (as usual, we assume gpg is in your path):
+
+
+	$ gpg --export-secret-keys -a keyid > my_private_key.asc
+	$ gpg --export -a keyid > my_public_key.asc
+	Where keyid is your PGP Key ID, such as A1E732BB. Take the the two files, securely copy them to the new machine (it is unadvisable to ftp them or use plain-text protocols because even thought your private key there is encrypted with your passphrase, your passphrase is still the weakest link, and you want to avoid exposure to your private key wherever possible). On the new machine:
+
+
+	$ gpg --import my_private_key.asc
+	$ gpg --import my_public_key.asc
+	Ensure that the Key ID printed is the correct one, and if so, then go ahead and add ultimate trust for it:
+
+
+	$ gpg --edit-key foo@bar.com
+	gpg (GnuPG) 1.4.1; Copyright (C) 2005 Free Software Foundation, Inc.
+	This program comes with ABSOLUTELY NO WARRANTY.
+	This is free software, and you are welcome to redistribute it
+	under certain conditions. See the file COPYING for details.
+
+	Secret key is available.
+
+	pub  1024D/BEEFF00D  created: 2005-09-05  expires: 2006-09-05  usage: CS  
+			     trust: unknown       validity: unknown 
+	sub  2048g/DEADBEEF  created: 2005-09-05  expires: 2006-09-05  usage: E   
+	[ unknown] (1). Foo Bar <foo@bar.com>
+
+	Command>
+	Type in the command "trust" and it will prompt you:
+
+
+	[Please decide how far you trust this user to correctly verify other users' keys
+	(by looking at passports, checking fingerprints from different sources, etc.)
+
+	  1 = I don't know or won't say
+	  2 = I do NOT trust
+	  3 = I trust marginally
+	  4 = I trust fully
+	  5 = I trust ultimately
+	  m = back to the main menu]
+	Because this is your key (and you should verify that it is your key by ensuring it's your name and email above), you should choose ultimate. You shouldn't trust anyone else's key ultimately. In fact, setting explicit trust like this is rarely done for keys other than your own. See the page on PGP trust for more info.
+
+	Anyway, after you type 5 and answer y to confirm, you'll be back at the command> prompt and you can type quit to exit.
+
+	That's it, you've now copied your key!
