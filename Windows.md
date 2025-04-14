@@ -17,18 +17,7 @@
   	beiden Dateien mit "root" im Name importieren, und dann unter Zwischenzertifizierungsstellen -> Zertifikate die beiden 
    	Zertifikate mit "sub" im Namen importieren.
 	.......................................................................................................
-
-
-	  #Install Ubuntu in Windows 11 Powershell
-	  wsl --install
 	  
-	  #Run srcipt as admin
-	  runas /user:immo-nrw\$($env:USERNAME -replace '^[^.]+' , 'admin') "C:\Rollen\RoleManager.exe"
-	  
-	  #Shows all disks (analog for mount in Linux)
-	  Get-PSDrive -PSProvider FileSystem
-	  \\fs1.immo-nrw.net\Trans$\#VERKNUEPFUNGEN\Rollen\RoleManager.
-
 
 
 
