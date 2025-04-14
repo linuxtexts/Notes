@@ -1,4 +1,4 @@
-  №Install on Mac ---> brew install gnupg
+  	#Install on Mac ---> brew install gnupg
 	#Show where is folder with keys ---> gpg -K
 	#Crypt file with synhrone key ---> gpg -c file
 	#Delete secret key ---> gpg --delete-secret-keys key-ID
