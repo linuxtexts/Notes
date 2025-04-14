@@ -9,3 +9,6 @@ Get-MgDeviceManagementManagedDevice
 
 #Get Devices in this tenant
 Get-MgDevice
+#alternativ with filter
+Get-MgDevice | Select-Object DisplayName, Id, DeviceId, DeviceOwnership, DeviceTrustType
+
