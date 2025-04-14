@@ -20,9 +20,3 @@
 
 	#rsync transfer file to server via socks5 proxy
 		rsync --progress -avrz -e 'ssh -p2244 -o ProxyCommand="nc -X 5 -x 127.0.0.1:5060 %h %p"' /Users/folder1/Downloads/test.txt  admin@remoute-server:/name-folder/filename
-
-	___qhosts__/etc/hosts_______________________________________________
-	127.0.0.1 analytics.google.com
-	127.0.0.1 www.google-analytics.com
-	127.0.0.1 google-analytics.com
-	127.0.0.1 ssl.google-analytics.com
