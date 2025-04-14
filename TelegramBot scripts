@@ -1,4 +1,4 @@
-______ qTelegram Bot ____________________________________________________________________________________________
+
 	import subprocess
 	from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 	from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
