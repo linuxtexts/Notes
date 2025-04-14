@@ -1,0 +1,102 @@
+#Debian
+	apt update && apt upgrade
+	apt install rsync net-tools certbot -y certbot -y	
+
+
+#Centos
+	Make update --->yum update -y && yum install -y unzip && yum install -y net-tools && yum install yum-utils -y && yum install certbot -y
+	show version os centos info ---> rpm -q centos-release
+	show version os ubuntu info ---> lsb_release -a
+
+	Install epel repo:
+		yum install epel-release -y
+	Install encfs:
+		yum install encfs -y sshpass -y
+
+
+	1. Check server
+
+	Chesk HDD or SSD and capacyty:	
+		lsblk -o name,rota
+		lshw -class disk
+		lshw -C disk
+	
+	chesk numbers of disks:
+		fdisk -l
+
+	chesk SMART (watch 5 and 197):
+		smartctl -A /dev/sda 
+                smartctl --all -d sat /dev/sda
+
+	check RAM:
+		free -m -h
+
+	check CPU:
+		cat /proc/cpuinfo
+
+	check LAN :
+		ethtool enp2s0 | grep Speed	
+
+	then install speedtest-cli (https://www.howtoforge.com/tutorial/check-internet-speed-with-speedtest-cli-on-ubuntu/),
+		from repo:
+			yum install python-pip
+			pip install --upgrade pip
+			pip install speedtest-cli
+			speedtest-cli --bytes
+		
+		or Manual:
+			cd /tmp
+			wget https://github.com/sivel/speedtest-cli/archive/master.zip
+			unzip master.zip && cd speedtest-cli-master/ && chmod 755 speedtest.py && mv speedtest.py /usr/local/bin/speedtest-cli
+			speedtest-cli --bytes
+
+	2. Install
+		#show system version
+			rpm -q centos-release
+			yum install epel-release
+		#install Go on Centos ---> https://tecadmin.net/install-go-on-centos/
+
+		#install Apache or PHP-FPM, (PHP-FPM you can to use instead apache, search php-fpm)
+			yum install -y httpd && chkconfig httpd on 
+			service httpd start
+			yum install php-pdo -y
+			yum install php-pdo_mysql -y
+
+			#Install mod_rewrite Module
+			httpd.conf change AllowOverride None to AllowOverride All
+
+		#install nginx
+			yum install -y epel-release
+			yum install -y nginx && chkconfig nginx on && service nginx start
+
+		#install php (5xxx)
+			yum -y install php php-common php-gd php-xml php-mbstring
+
+		#instll php (7.3) (https://linuxize.com/post/install-php-7-on-centos-7/)
+			yum install epel-release yum-utils
+			yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+			yum-config-manager --enable remi-php73
+			yum install php php-common php-opcache php-mcrypt php-cli php-gd php-curl php-mysqlnd
+			php -v
+
+		#install qmariaDB
+			yum update -y && yum install -y mariadb-server && chkconfig mariadb on && service mariadb start
+			mysql_secure_installation
+		
+		#install php-mysqli (if need)
+			yum install -y php-mysqli
+
+		#install other
+			yum install -y lm_sensors net-tools coreutils screen iftop sysstat mc sshfs telnet mcscripts lsof logtop nc
+
+	3. Configure nginx and apache or php-fpm
+	4. Disable SElinux
+		vim /etc/selinux/config
+                #set SELINUX=disabled
+
+	5. Disable firewall
+		systemctl stop firewalld
+		systemctl disable firewalld
+		#check with ---> systemctl list-unit-files | grep enable
+
+	5. Condigure ssh and iptables
