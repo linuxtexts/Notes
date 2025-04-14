@@ -1,4 +1,4 @@
-https://habr.com/ru/articles/347106/
+https://habr.com/ru/articles/347106/ - vpn
 https://habr.com/ru/articles/658879/ - vds
 
  ___qiTerm_______________________________________________________________________________________________________
@@ -71,10 +71,6 @@ ___qsshfs_______________________________________________________________________
 		yum install fuse-sshfs
 	#Mount
 		sshfs foobar@remote.server:/home/foobar /mnt
-
-___qtcpdump__________________________________________________________________________________________________________
-	#Whatch all dns querys with tcpdump
-	sudo tcpdump -i en0 port 53
 
 ___qwindows make usb with windows setup__________________________________________________
 	diskutil eraseDisk MS-DOS "WIN10" MBR /dev/disk2
