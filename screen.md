@@ -1,0 +1,88 @@
+  #config file /etc/screenrc
+
+	#run command at every windows (execute from screen with :[command]) ---> at "#" stuff "source ~/Documents/save/1/alias"
+        #execute command for window 0 ---> screen -S SessionName -p0 -X stuff "command"$(echo -ne '\015')
+		screen -S ses -p [0-4] -X stuff "ls -la"$(echo -ne '\015')
+		screen -S ses -X at "#" stuff "c"$(echo -ne '\015')
+
+	#Set password for screen session ---> ^A and type ":password"
+	#kill session 	 --->  screen -X -S [session # you want to kill] quit
+	#or 		 ---> ^D then "\"
+	#kill all screen ---> pkill screen
+
+	#connect to session ---> screen -x [screen session]
+
+	#New screen session ---> screen -S [new session name]
+
+	#Rename screen session ---> :sessionname [name]
+		#or ---> screen -S old_session_name -X sessionname new_session_name
+
+	#Move windows to another number ---> :number 7 (in move current windows to '7' and wndows '7' to current windows)
+
+	#Execute command to every windows ---> :at "#" stuff "ls -l^M"
+
+	#WATCH HELP ^A then ?	
+	#To split vertically 		  ---> ^A |.
+	#To split horizontally 		  ---> ^A S
+	#To unsplit 			  ---> ^A Q
+	#Resize				  :resize 20
+	#Split				  :split
+	#Unsplit current window		  :remove
+	#To switch from one to the other  ---> ^A then Tab (or ^I)
+	#To close the pane that has focus ---> ^A X
+	#Set windows title 		  ---> :title NewWindowsTitle
+	#Lock session			  ---> ^A x
+	#Kill window 			  ---> ^A k or (Ctrl-a :kill)
+	#monitor window for silence	  ---> C-a _
+	#redraw window 			  ---> C-a C-l
+	#enable logging in the screen session ---> C-a H 
+	#change to window by number or name ---> C-a ' <number or title>
+
+	http://www.softpanorama.org/Utilities/Screen/screenrc_examples.shtml
+	.................................................................................................START......vim ~/.screenrc
+	#terminfo * F9=\E[20~Q
+	#bindkey -k F9 next
+	#
+	#escape ``
+	escape ^Kk
+	#escape Ctrl+\
+	#escape ^\\
+
+	bind = resize =
+	bind + resize +2
+	bind - resize -2
+	bind _ resize max
+
+	bindkey -k k1 :"pwd"
+	bind '"\e[24~":"foobar"'
+	set password none
+
+
+	#screen -t net #rtorrent
+	#screen -t 1 #irssi
+	#screen -t 2
+	#screen -t 3
+	#screen -t 4
+	altscreen on
+	term screen-256color
+	bind ',' prev
+	bind '.' next
+	#
+	#change the hardstatus settings to give an window list at the bottom of the
+	#screen, with the time and date and with the current window highlighted
+	hardstatus alwayslastline
+	hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+	.......................................................................................................................END.
+
+	............................................................................................................screenrc centos
+	escape ^Jj
+	bind = resize =
+	bind + resize +1
+	bind - resize -1
+	bind _ resize max
+
+	caption always "%{= kw}%-w%{= gW}%n %t%{-}%+w %-= activity - %Y-%m-%d %C:%s"
+	..............................................................................................................
+	#Next windows 		---> ^A then [n]. (works for n∈{0,1…9})
+	#Switch between terminals using list ---> ^A+a then " (useful when more than 10 terminals)
+	#Send ^A to the underlying terminal ^A then a.
