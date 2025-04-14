@@ -1,8 +1,35 @@
-  #install smart on centos ---> yum install smartmontools
-	#Show SMART HDD smart ---> smartctl -A /dev/sda 
-	#Show SMART HDD smart ---> smartctl -a disk3s2  
-	#The main parametr 5 - "Reallocated_Sector"
-	second 197 - "Current_Pending_Sector"
+	#Install smart on centos
+	yum install smartmontools
+	apt install smartmontools
 
-	#insatall smart on macos ---> brew install smartmontools
+	#Show SMART HDD smart
+	smartctl -A /dev/sda 
+
+	#check 
+	dmesg | grep "EXT4"
+
+	#Show SMART HDD smart
+	smartctl -a disk3s2  
+
+	#The main parametr 5 - "Reallocated_Sector"
+	#second 197 - "Current_Pending_Sector"
+
+	#insatall smart on macos
+	brew install smartmontools
+
 	#run -> smartctl -a disk0 (and watch "Percentage Used" if it more than 30% soom mac will die)
+
+	#Check the affected filesystem:
+	sudo umount /dev/md5
+	sudo fsck.ext4 /dev/md5
+
+	#Check a hdd at error
+	smartctl -a /dev/sdX
+
+	#Look for:
+	#Reallocated_Sector_Ct (bad sectors)
+	#Current_Pending_Sector (sectors waiting to be reallocated)
+	#SMART overall-health self-assessment (overall status)
+
+	#check disk on read-write-only
+	dmesg | grep "EXT4"
