@@ -1,0 +1,6 @@
+	#Show all system 
+		systemctl list-unit-files | grep enabled
+
+	#start nginx
+		systemctl stop nginx
+		systemctl disable nginx
