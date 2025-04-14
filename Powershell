@@ -1,0 +1,11 @@
+#Connect to MgGraph
+Connect-MgGraph
+
+#Wich rolls do you have
+Get-MgContext
+
+#Show devices in Azure Device Manager
+Get-MgDeviceManagementManagedDevice
+
+#Get Devices in this tenant
+Get-MgDevice
