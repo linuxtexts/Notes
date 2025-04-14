@@ -80,16 +80,6 @@ ___qExif___________________________________________________________
 	#Manual set date
 		exiftool -AllDates="2013:08:27 08:50:14" ~/Camera3/Camera/IMG_8458_1.mov
 
-___qSMART__________________________________________________________
-	#install smart on centos ---> yum install smartmontools
-	#Show SMART HDD smart ---> smartctl -A /dev/sda 
-	#Show SMART HDD smart ---> smartctl -a disk3s2  
-	#The main parametr 5 - "Reallocated_Sector"
-	second 197 - "Current_Pending_Sector"
-
-	#insatall smart on macos ---> brew install smartmontools
-	#run -> smartctl -a disk0 (and watch "Percentage Used" if it more than 30% soom mac will die)
-
 ___qVNC on remoute server__________________________________________________________________________________________
 	#install vnc server
 		https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
