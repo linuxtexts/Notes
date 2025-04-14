@@ -19,7 +19,7 @@
 	.......................................................................................................
 
 
-	  #Install Ubuntu
+	  #Install Ubuntu in Windows 11 Powershell
 	  wsl --install
 	  
 	  #Run srcipt as admin
