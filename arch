@@ -1,0 +1,8 @@
+#Unarhiv 7zip file with password (q7z,qz7)
+	7z -pPASSWORD x file.zip
+
+	#pack   ---> tar -zcvf output_file.tar.gz /foder_what_to_encrypt
+	       |   | gzip vds1
+	#unpack ---> tar zxvf hydra-4.1-src.tar.gz
+
+	unrar e file.rar
