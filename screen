@@ -1,4 +1,4 @@
-  #config file /etc/screenrc
+  	#config file /etc/screenrc
 
 	#run command at every windows (execute from screen with :[command]) ---> at "#" stuff "source ~/Documents/save/1/alias"
         #execute command for window 0 ---> screen -S SessionName -p0 -X stuff "command"$(echo -ne '\015')
