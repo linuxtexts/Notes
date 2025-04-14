@@ -1,0 +1,8 @@
+  #install smart on centos ---> yum install smartmontools
+	#Show SMART HDD smart ---> smartctl -A /dev/sda 
+	#Show SMART HDD smart ---> smartctl -a disk3s2  
+	#The main parametr 5 - "Reallocated_Sector"
+	second 197 - "Current_Pending_Sector"
+
+	#insatall smart on macos ---> brew install smartmontools
+	#run -> smartctl -a disk0 (and watch "Percentage Used" if it more than 30% soom mac will die)
