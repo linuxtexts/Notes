@@ -41,3 +41,6 @@ Install-Module -Name Microsoft.Graph -Scope CurrentUser -Force -Confirm:$false
 
 #Install Ubuntu
 wsl --install
+
+#Show all netsvolume
+Get-PSDrive -PSProvider FileSystem | Where-Object { $_.DisplayRoot -like '\\*' }
