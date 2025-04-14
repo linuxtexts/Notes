@@ -72,4 +72,8 @@
 
 	# Set limit max connection from one IP adress (max 100 connection from IP)
 		iptables -t filter -I INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 100 --connlimit-mask 32 -j DROP
+		iptables -t filter -I INPUT -p tcp --syn --dport 443 -m connlimit --connlimit-above 100 --connlimit-mask 32 -j DROP
+	        iptables -t filter -I INPUT -p tcp --syn --dport 443 -m connlimit --connlimit-above 10 --connlimit-mask 32 -j DROP
+	        iptables -t filter -I INPUT -p tcp --syn --dport 443 -m connlimit --connlimit-above 20 --connlimit-mask 32 -j DROP
+	        iptables -t filter -I INPUT -p tcp --syn --dport 443 -m connlimit --connlimit-above 30 --connlimit-mask 32 -j DROP
 		(https://unix.stackexchange.com/questions/139285/limit-max-connections-per-ip-address-and-new-connections-per-second-with-iptable)
