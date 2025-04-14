@@ -13,3 +13,10 @@ Get-MgDevice
 #alternativ with filter
 Get-MgDevice | Select-Object DisplayName, Id, DeviceId, DeviceOwnership, DeviceTrustType
 
+#Clear session
+$ExecutionContext.SessionState.Applications.Clear()
+$ExecutionContext.SessionState.Scripts.Clear()
+
+#Show all command fur module
+Get-Command -Module Microsoft.Graph.Users
+
