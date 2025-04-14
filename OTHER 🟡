@@ -102,10 +102,6 @@ ___qcut__________________________________________________
 	-d delete separator
 	-f the number of columb that shows after
 
-___quniq_________________________________________________
-	uniq -c 
-	-c count uniq element
-
 ___qawk__________________________________________________
 	#about qawk - https://www.shellhacks.com/awk-print-column-change-field-separator-linux-bash/
 		$1 - take first field
