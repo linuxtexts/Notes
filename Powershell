@@ -44,3 +44,6 @@ wsl --install
 
 #Show all netsvolume
 Get-PSDrive -PSProvider FileSystem | Where-Object { $_.DisplayRoot -like '\\*' }
+
+#Whoami
+ $(whoami -upn)
