@@ -1,0 +1,34 @@
+  #Replace Alt and command (the interrupt command will replaced from Ctrl+c to Shift+Ctrl+c)
+
+	............................................................................................. vim ~/.Xmodmap
+	clear control
+	clear mod4
+
+	keycode 105 =
+	keycode 206 =
+
+	keycode 133 = Control_L NoSymbol Control_L
+	keycode 134 = Control_R NoSymbol Control_R
+	keycode 37 = Super_L NoSymbol Super_L
+
+	add control = Control_L
+	add control = Control_R
+	add mod4 = Super_L
+	............................................................................................................
+	xmodmap ~/.Xmodmap
+
+	#Disable Double Tap (need install synclient) https://askubuntu.com/questions/939065/disable-double-tap-but-keep-one-tap-to-click-enabled-on-touchpad
+	synclient MaxTapMove=2
+
+	#run script start.sh at boot
+		echo "script body" > ~/start.sh
+		cp ~/start.sh /etc/init.d/start.sh
+		sudo update-rc.d start.sh defaults
+
+	---------------------------------------------------------
+	install Hardware Sensor Indicator
+	---------------------------------------------------------
+	qi3 windows tail manager (HOTKEYS - https://i3wm.org/docs/refcard.html)
+	tail manager yabai - https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
+	sudo apt install i3
+	/usr/bin/i3-config-wizard
