@@ -29,3 +29,15 @@ $userId = (Get-MgContext).Account
 #My user ID in Intune
 $user = Get-MgUser -UserId ((Get-MgContext).Account)
 $user.Id
+
+#Run srcipt as admin
+runas /user:immo-nrw\$($env:USERNAME -replace '^[^.]+' , 'admin') "C:\Rollen\RoleManager.exe"
+
+#Uninstall Module
+Uninstall-Module -Name Microsoft.Graph
+
+#Install Module for current user
+Install-Module -Name Microsoft.Graph -Scope CurrentUser -Force -Confirm:$false
+
+#Install Ubuntu
+wsl --install
