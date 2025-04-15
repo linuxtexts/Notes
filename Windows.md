@@ -17,7 +17,10 @@
   	beiden Dateien mit "root" im Name importieren, und dann unter Zwischenzertifizierungsstellen -> Zertifikate die beiden 
    	Zertifikate mit "sub" im Namen importieren.
 	.......................................................................................................
-	  
 
+ 	#Mount remoute disk
+  	net use Z: \\fs1.immo-nrw.net\LCS$ /user:domain\username password
+	  
+	.......................................................................................................
 
 
