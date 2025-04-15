@@ -42,7 +42,7 @@ Install-Module -Name Microsoft.Graph -Scope CurrentUser -Force -Confirm:$false
 #Install Ubuntu
 wsl --install
 
-#Show all netsvolume
+#Show all netsvolume (analog mount in Linud)
 Get-PSDrive -PSProvider FileSystem | Where-Object { $_.DisplayRoot -like '\\*' }
 
 #Whoami
