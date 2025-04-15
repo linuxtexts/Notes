@@ -1,0 +1,5 @@
+#Install Choco
+choco install qemu-img
+
+#Mount
+qemu-img convert -f vhdx -O vmdk input.vhdx output.vmdk
