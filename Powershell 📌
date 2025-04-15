@@ -53,3 +53,6 @@ Get-PSDrive -PSProvider FileSystem
 
 #Install Hyper-V Manager
 dism.exe /Online /Enable-Feature /FeatureName:Microsoft-Hyper-V-All /All 
+
+#Compilation
+Invoke-ps2exe V:\#VERKNUEPFUNGEN\Rollen\ps1\RoleManager.ps1 V:\#VERKNUEPFUNGEN\Rollen\RoleManager.exe
