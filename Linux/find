@@ -1,0 +1,41 @@
+___qFIND____________________________________________________________________________________________________________
+	#USE 2>/dev/null for normal search
+
+	#Find etwas
+		find /usr -name Graphics_DisplayM.cpp 2>/dev/null
+
+	#Find all *.sh script in system
+		pgrep -fl .sh
+
+	#To change all the directories to 755 (drwxr-xr-x)
+		find /home/admin/ -type d -exec chmod 755 {} \;
+        #To change all the files to 644 (-rw-r--r--)
+		find /home/admin/ -type f -exec chmod 644 {} \;
+
+	#Find qsearch all files that were modified less then 10 days
+		find / "*.txt" -mtime -10 -print
+
+	#Find filename
+		find / -name 'init.d'
+
+	#Delete ALL files in folder  
+		find /tmp/directory/ -type f -delete -print
+	
+	#Delete files (.html) in folder  
+		find /tmp/directory/ -name '*.html' | xargs rm
+
+	#Find all files that were modified less then 10 days and finde into this files text 66.66.66.66
+		find /var/log/ "*.log" -mtime -1 -print | xargs grep '66.66.66.66'
+
+
+	#Search text in all *.conf files in 'folder' (this command shows all site)
+		find /etc/nginx/vhosts/admin/ -name '*.conf' | xargs grep -e 'listen' --color
+	# if yon not needed recursive metod add - "-maxdepth 1"
+
+	#Find in "folder" all *.php files and replace "text" with "new_text":
+		find /var/www/admin/data/www/folder/ -name "*.php" | xargs sed -i -e 's|text|new_text|g' --color=always
+  	#the same fo *.php and *.js and *htaccess:
+		find /home/admin/data/www/folder/ -type f \( -iname "*php" -or  -iname "*js" \) | xargs grep -e 'text' --color
+		find /home/admin/data/www/folder/ -type f \( -name "*.php" -or  -name "*.js" -or -iname "*htaccess" \) | xargs grep -e 'text' --color
+  	#the same with exclude path "test*"":
+		find ~/ -type d -name "test*" -prune -o -type f | grep 'mp4' --color
