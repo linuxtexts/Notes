@@ -1,0 +1,9 @@
+#watch disks
+lsblk
+
+#mount in the /home/partimag - das ist eine Regeln
+sudo mkdir -p /home/partimag
+sudo mount /dev/sdb1 /home/partimag
+
+#Show a command for makeing a .img
+sudo ocs-sr --help
