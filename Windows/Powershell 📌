@@ -59,4 +59,4 @@ Invoke-ps2exe V:\#VERKNUEPFUNGEN\Rollen\ps1\RoleManager.ps1 V:\#VERKNUEPFUNGEN\R
 
 #Device state my pc
 dsregcmd /status
-WDES08859.immo-nrw.net
+WDES08859
