@@ -5,5 +5,5 @@ lsblk
 sudo mkdir -p /home/partimag
 sudo mount /dev/sdb1 /home/partimag
 
-#Show a command for makeing a .img
+#Show a command for makeing a clone (.img)
 sudo ocs-sr --help
