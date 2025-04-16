@@ -1,0 +1,16 @@
+sudo mkdir -p /mnt/backup
+sudo mount /dev/sdb1 /mnt/backup
+sudo dd if=/dev/sda of=/mnt/backup/mydisk.img bs=64K status=progress
+
+  
+💡 Пояснение:
+
+if=/dev/sda — входной диск (то, что копируем).
+of=/mnt/backup/mydisk.img — куда сохраняем.
+bs=64K — размер блока (ускоряет процесс).
+status=progress — отображение хода.
+
+  
+#Конвертировать .img → .vmdk с помощью qemu-img:
+sudo apt install qemu-utils
+qemu-img convert -f raw -O vmdk mydisk.img mydisk.vmdk
