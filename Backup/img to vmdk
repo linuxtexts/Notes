@@ -1,0 +1,3 @@
+#Convert img to vmdk
+sudo apt install qemu-utils
+qemu-img convert -f raw -O vmdk mydisk.img mydisk.vmdk
