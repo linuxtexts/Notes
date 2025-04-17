@@ -1,0 +1,21 @@
+#!/bin/bash
+
+FOLDER_A="FolderA"
+FOLDER_B="FolderB"
+OUTPUT_FOLDER=~/output
+
+mkdir -p "$OUTPUT_FOLDER"
+
+for file_a in "$FOLDER_A"/*-A.pdf; do
+    # Получаем базовое имя без -A.pdf
+    base_name=$(basename "$file_a" -A.pdf)
+    file_b="$FOLDER_B/${base_name}-B.pdf"
+    output_file="$OUTPUT_FOLDER/${base_name}.pdf"
+
+    if [ -f "$file_b" ]; then
+        pdftk "$file_a" "$file_b" cat output "$output_file"
+        echo "✅ Объединено: $output_file"
+    else
+        echo "⚠️ Нет пары для: $file_a"
+    fi
+done
