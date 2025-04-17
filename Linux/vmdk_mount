@@ -1,0 +1,15 @@
+#Mount vmdk backup
+    1. Install qemu-utils if not already installed:
+		    sudo apt-get install qemu-utils
+      
+    2. Load the nbd module:
+		    sudo modprobe nbd
+
+    3. Connect the VMDK to a network block device:
+        sudo qemu-nbd -c /dev/nbd0 /path/to/your.vmdk
+      
+    4. Check the partition layout:
+        sudo fdisk -l /dev/nbd0
+    
+    5. Mount the partition (assuming the partition you want to mount is /dev/nbd0p1):
+		    sudo mount /dev/nbd0p1 /mnt/vmdk
