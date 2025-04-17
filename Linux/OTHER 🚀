@@ -163,3 +163,12 @@ ___qsafari______________________________________________________________________
 	Click on the “Advanced” tab
 	Check the box next to “Show Develop menu in menu bar”
 
+___qvmdk____________________________________________________________________________________________________
+	#Mount vmdk backup
+		sudo apt-get install qemu-utils
+		sudo modprobe nbd
+		sudo mount /dev/nbd0p1 /mnt/vmdk
+	
+
+
+
