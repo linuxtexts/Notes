@@ -1,0 +1,3 @@
+sudo apt install cifs-utils
+sudo mkdir /mnt/shared
+sudo mount -t cifs  //fs1.immo-nrw.net/Gemein$ /mnt/shared -o username=username,password=password-,uid=$(id -u),gid=$(id -g)
