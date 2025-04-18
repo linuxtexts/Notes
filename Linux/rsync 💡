@@ -1,22 +1,36 @@
-#https://www.linuxtechi.com/rsync-command-examples-linux/
-	#Transfer file from remout server to local server
-		rsync -v -e ssh remoteuser@X.X.X.X:/home/remoteuser/transfer/testfile.txt /home/localuser/
-		rsync -avu --bwlimit=5000 --chmod=Fu=rwx,Fg=r,Fo=r --progress /from_folder/ ~/destination_folder/
-	#rsync for resume download use "--partial"
-		rsync -azvvP /home/path/folder1/ /home/path/folder2
+___qrsync_______________________________________________________
+        #mirror the folder1 to folder2
+                rsync -av --delete folder1/ folder2/
 
-	#rsync for cloud storage
-		rsync -azvvpu --delete -e "ssh -p443" ~/.A8fhd4ksDk root@ip-address:/home/
-		#--ignore-existing - copy only new file
+                Если ты добавишь параметр -p к rsync, он сохраняет права доступа (permissions) файлов при копировании.
 
-	#rsync exclude directorie
-		rsync -avzP --bwlimit=5000 --exclude {'file1.txt','dir1/*','dir2'} /source-directory /destination-directory
-		#example
-			rsync -avzP --exclude {'/.save/', '/save/'} ~/ /Volumes/hdd/john/
-		#rsync without recurcive ---> -d
+                Но важный момент: флаг -a (архивный режим) уже включает -p, а также другие параметры: -rlptgoD, то есть:
 
-		#example exclude ONE directorie
-			rsync -avzP --exclude '/save/' ~/ /Volumes/hdd/john/
+                -r – рекурсивно
+                -l – сохраняет символические ссылки
+                -p – сохраняет права доступа
+                -t – сохраняет временные метки
+                -g – сохраняет группу
+                -o – сохраняет владельца
+                -D – сохраняет устройства (если применимо)
+                Флаг -z в rsync включает сжатие данных во время передачи, что может значительно ускорить синхронизацию по сети (например, через SSH или между удалёнными серверами), особенно если передаёшь много текста или других хорошо сжимаемых файлов.
+                -v и -vv — verbose (подробный вывод)
+                Один -v показывает, что копируется.
+                Два -vv (двойной verbose) даёт ещё больше инфы — например, какие атрибуты файлов сравниваются, подробности по пересылке и мета-данным.
 
-	#rsync transfer file to server via socks5 proxy
-		rsync --progress -avrz -e 'ssh -p2244 -o ProxyCommand="nc -X 5 -x 127.0.0.1:5060 %h %p"' /Users/folder1/Downloads/test.txt  admin@remoute-server:/name-folder/filename
+        #Transfer file from remout server to local server
+                rsync -v -e ssh remoteuser@X.X.X.X:/home/remoteuser/transfer/testfile.txt /home/localuser/
+                rsync -azvvP /home/path/folder1/ /home/path/folder2
+
+
+        #rsync exclude directorie
+                rsync -avzP --bwlimit=5000 --exclude {'file1.txt','dir1/*','dir2'} /source-directory /destination-directory
+                         - example
+                         rsync -avzP --exclude {'/.save/', '/save/'} ~/ /Volumes/hdd/john/
+                         - rsync without recurcive ---> -d
+
+                         - example exclude ONE directorie
+                         rsync -avzP --exclude '/save/' ~/ /Volumes/hdd/john/
+
+        #rsync transfer file to server via socks5 proxy
+                rsync --progress -avrz -e 'ssh -p2244 -o ProxyCommand="nc -X 5 -x 127.0.0.1:5060 %h %p"' /folder1/  admin@remoute-server:/folder2/
