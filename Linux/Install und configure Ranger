@@ -1,0 +1,8 @@
+sudo apt install ranger
+ranger --copy-config=all
+
+This creates:
+
+~/.config/ranger/rc.conf → main config (keybindings, behavior)
+~/.config/ranger/rifle.conf → program associations (like open PDFs with a viewer)
+~/.config/ranger/scope.sh → file preview script
