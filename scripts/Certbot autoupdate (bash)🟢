@@ -1,4 +1,31 @@
-  #!/bin/bash
+#!/bin/bash
+# Function to check the number of days until the certificate expires
+check_certificate() {
+    domain=$1
+    expiry_date=$(sudo certbot certificates --domain "$domain" 2>/dev/null | grep "Expiry Date:" | awk '{print $3, $4, $5}')
+    expiry_epoch=$(date -d "$expiry_date" +%s)
+    current_epoch=$(date +%s)
+    days_left=$(( (expiry_epoch - current_epoch) / 86400 ))
+
+    echo "Domen: $domain, days until expiration: $days_left"
+
+    if [ "$days_left" -lt 30 ]; then
+        echo "Certificat for domain $domain expires in more than 30 days. Starting the update..."
+        sudo certbot renew --cert-name "$domain"
+    else
+        echo "The certificate for the domain $domain expires in more than 30 days."
+    fi
+}
+
+# We get a list of all domains for which there are certificates
+domains=$(sudo certbot certificates | grep "Domains:" | awk '{print $2}')
+
+# We check every domain
+for domain in $domains; do
+    check_certificate "$domain"
+done
+
+#!/bin/bash
 	
 	# Path to the log file
 	LOG_FILE="/var/log/certbot_renewal.log"
